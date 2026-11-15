@@ -1,0 +1,63 @@
+# Serveur de code Dagster du lakehouse-nc, déclaré dans le workspace du Dagster
+# partagé (my-kluster/argocd/argocd-apps/dagster.yaml). Les runs sont lancés par
+# le K8sRunLauncher dans le namespace dagster, avec l'image et le contexte
+# ci-dessous (secret S3 et adresse de Trino).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dagster-code-lakehouse-nc
+  namespace: dagster
+  labels:
+    app: dagster-user-code
+    component: lakehouse-nc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dagster-user-code
+      component: lakehouse-nc
+  template:
+    metadata:
+      labels:
+        app: dagster-user-code
+        component: lakehouse-nc
+    spec:
+      containers:
+        - name: user-code
+          image: localhost:32000/lakehouse-nc-dagster:latest
+          imagePullPolicy: Always
+          ports:
+            - name: grpc
+              containerPort: 4000
+          env:
+            - name: DAGSTER_CURRENT_IMAGE
+              value: localhost:32000/lakehouse-nc-dagster:latest
+            - name: DAGSTER_CONTAINER_CONTEXT
+              value: >-
+                {"k8s": {"env_secrets": ["lakehouse-nc-dagster"],
+                "env_vars": ["TRINO_HOST=trino.lakehouse-nc.svc.cluster.local"]}}
+          readinessProbe:
+            exec:
+              command: ["dagster", "api", "grpc-health-check", "-p", "4000"]
+            periodSeconds: 20
+            timeoutSeconds: 10
+          resources:
+            requests:
+              cpu: 50m
+              memory: 384Mi
+            limits:
+              memory: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dagster-code-lakehouse-nc
+  namespace: dagster
+spec:
+  selector:
+    app: dagster-user-code
+    component: lakehouse-nc
+  ports:
+    - name: grpc
+      port: 4000
+      targetPort: 4000

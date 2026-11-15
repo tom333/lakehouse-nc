@@ -50,14 +50,18 @@ def configurer() -> None:
     }
 
 
-def main(tables: list[str]) -> None:
-    configurer()
-    pipeline = dlt.pipeline(
+def creer_pipeline() -> dlt.Pipeline:
+    """Pipeline dlt vers bronze ; appeler configurer() avant de le lancer."""
+    return dlt.pipeline(
         pipeline_name="data_gouv_nc",
         destination=dlt.destinations.filesystem(bucket_url=BUCKET),
         dataset_name="bronze",
     )
-    print(pipeline.run(data_gouv_nc(tuple(tables) or None)))
+
+
+def main(tables: list[str]) -> None:
+    configurer()
+    print(creer_pipeline().run(data_gouv_nc(tuple(tables) or None)))
 
 
 if __name__ == "__main__":
