@@ -1,5 +1,5 @@
-# Amorce Lakekeeper et crée le warehouse Iceberg après chaque synchronisation.
-# Idempotent : bootstrap déjà fait et warehouse existant (409) sont acceptés.
+# Amorce Lakekeeper et aligne le warehouse Iceberg sur ces valeurs après chaque
+# synchronisation : création s'il n'existe pas, sinon mise à jour du stockage.
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -14,10 +14,10 @@ spec:
       restartPolicy: OnFailure
       securityContext:
         runAsNonRoot: true
-        runAsUser: 100
+        runAsUser: 1000
       containers:
         - name: warehouse
-          image: curlimages/curl:8.17.0
+          image: python:3.13-alpine
           env:
             - name: S3_ACCESS_KEY
               valueFrom:
@@ -29,37 +29,64 @@ spec:
                 secretKeyRef:
                   name: lakehouse-nc-secrets
                   key: s3-secret-key
-          command: ["/bin/sh", "-ec"]
+          command: ["python", "-c"]
           args:
             - |
-              API=http://lakekeeper.{{ .Release.Namespace }}.svc.cluster.local:8181/management/v1
-              until curl -sf "http://lakekeeper.{{ .Release.Namespace }}.svc.cluster.local:8181/health"; do sleep 5; done
-              # Bootstrap : 204 la première fois, erreur ensuite (déjà amorcé), sans conséquence.
-              curl -s -o /dev/null -w "bootstrap %{http_code}\n" -X POST "$API/bootstrap" \
-                -H 'Content-Type: application/json' -d '{"accept-terms-of-use": true}'
-              code=$(curl -s -o /tmp/out -w "%{http_code}" -X POST "$API/warehouse" \
-                -H 'Content-Type: application/json' -d @- <<EOF
-              {
-                "warehouse-name": "{{ .Values.warehouse.name }}",
-                "storage-credential": {
-                  "type": "s3",
-                  "credential-type": "access-key",
-                  "aws-access-key-id": "$S3_ACCESS_KEY",
-                  "aws-secret-access-key": "$S3_SECRET_KEY"
-                },
-                "storage-profile": {
-                  "type": "s3",
-                  "bucket": "{{ .Values.warehouse.bucket }}",
-                  "region": "{{ .Values.warehouse.region }}",
-                  "endpoint": "{{ .Values.warehouse.s3Endpoint }}",
-                  "path-style-access": true,
-                  "sts-enabled": false,
-                  "remote-signing-enabled": true,
-                  "flavor": "s3-compat"
-                },
-                "delete-profile": {"type": "hard"}
+              import json, os, time, urllib.error, urllib.request
+
+              BASE = "http://lakekeeper.{{ .Release.Namespace }}.svc.cluster.local:8181"
+              API = BASE + "/management/v1"
+
+              def appel(methode, chemin, corps=None):
+                  req = urllib.request.Request(
+                      API + chemin, method=methode,
+                      data=None if corps is None else json.dumps(corps).encode(),
+                      headers={"Content-Type": "application/json"},
+                  )
+                  try:
+                      with urllib.request.urlopen(req) as r:
+                          texte = r.read()
+                          return r.status, json.loads(texte) if texte else None
+                  except urllib.error.HTTPError as e:
+                      return e.code, e.read().decode()
+
+              while True:
+                  try:
+                      urllib.request.urlopen(BASE + "/health")
+                      break
+                  except OSError:
+                      time.sleep(5)
+
+              # 204 la première fois ; ensuite une erreur « déjà amorcé », sans conséquence.
+              print("bootstrap", appel("POST", "/bootstrap", {"accept-terms-of-use": True})[0])
+
+              stockage = {
+                  "storage-profile": {
+                      "type": "s3",
+                      "bucket": "{{ .Values.warehouse.bucket }}",
+                      "region": "{{ .Values.warehouse.region }}",
+                      "endpoint": "{{ .Values.warehouse.s3Endpoint }}",
+                      "path-style-access": True,
+                      "sts-enabled": False,
+                      "remote-signing-enabled": True,
+                      "flavor": "s3-compat",
+                  },
+                  "storage-credential": {
+                      "type": "s3",
+                      "credential-type": "access-key",
+                      "aws-access-key-id": os.environ["S3_ACCESS_KEY"],
+                      "aws-secret-access-key": os.environ["S3_SECRET_KEY"],
+                  },
               }
-              EOF
-              )
-              echo "warehouse $code"
-              [ "$code" = 201 ] || [ "$code" = 409 ] || { cat /tmp/out; exit 1; }
+              nom = "{{ .Values.warehouse.name }}"
+              code, rep = appel("POST", "/warehouse", {
+                  "warehouse-name": nom, "delete-profile": {"type": "hard"}, **stockage,
+              })
+              print("création", code)
+              if code == 409:
+                  _, liste = appel("GET", "/warehouse")
+                  wid = next(w["id"] for w in liste["warehouses"] if w["name"] == nom)
+                  code, rep = appel("POST", f"/warehouse/{wid}/storage", stockage)
+                  print("mise à jour du stockage", code)
+              if code >= 300:
+                  raise SystemExit(f"échec {code} : {rep}")

@@ -7,7 +7,9 @@
 warehouse:
   name: lakehouse
   bucket: lakehouse-nc
-  s3Endpoint: http://rustfs-svc.ia-lab.svc.cluster.local:9000
+  # Adresse publique : Lakekeeper la renvoie aux clients avec chaque table, elle
+  # doit être joignable hors du cluster (ingestion lancée en local) comme dedans.
+  s3Endpoint: https://rustfs.tgu.ovh
   region: us-east-1
 
 lakekeeper:
