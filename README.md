@@ -10,7 +10,8 @@ agent sur données gouvernées), sans catalogue OpenMetadata ni outil de BI.
 
 **État (2026-11-16) : étape 1 en cours.** Lakekeeper et Trino sont déployés en
 GitOps sur le cluster ; Trino lit et écrit des tables Iceberg stockées sur RustFS
-(`scripts/test-fumee-trino.sh`). Aucune donnée de data.gouv.nc n'est encore ingérée.
+(`scripts/test-fumee-trino.sh`). Deux jeux de data.gouv.nc (véhicules immatriculés, transferts de véhicules
+d'occasion : 577 643 lignes) sont chargés en bronze par dlt, en incrémental.
 
 ## Par où commencer
 

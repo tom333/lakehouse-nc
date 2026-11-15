@@ -5,8 +5,8 @@ Consignes pour un agent de code qui reprend ce projet.
 ## État
 
 Projet initié le 2026-11-16. Dépôt public `github.com/tom333/lakehouse-nc`.
-Étapes 1.1 (stockage) et 1.2 (Lakekeeper + Trino déployés par ArgoCD, chart
-`deploy/`) terminées. Voir `docs/plan.md` pour le détail et la suite.
+Étapes 1.1 (stockage), 1.2 (Lakekeeper + Trino déployés par ArgoCD, chart
+`deploy/`) et 1.3 (ingestion dlt en bronze, lancée en local) terminées. Voir `docs/plan.md` pour le détail et la suite.
 
 ## À lire avant d'agir
 

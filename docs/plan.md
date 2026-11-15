@@ -68,6 +68,36 @@ création de table en produit un vide), suppression.
 - Trino n'a ni authentification ni ingress : accessible dans le cluster
   seulement, jusqu'à l'étape 4.
 
+### Résultat de l'étape 1.3 (2026-11-16)
+
+Source dlt `ingestion/data_gouv_nc.py`, lancée par `uv run python -m
+ingestion.pipeline [table ...]` (variables d'environnement décrites en tête de
+`ingestion/pipeline.py`). dlt 1.32, destination `filesystem` au format Iceberg,
+catalogue REST Lakekeeper, schéma `bronze`.
+
+| Table bronze | Jeu data.gouv.nc | Clé | Curseur (recouvrement) | Lignes |
+|---|---|---|---|---|
+| `vehicules_immatricules` | `vehicules-immatricules-nc` | `numero_immat` | `date_mise_a_jour` (1 jour) | 472 159 |
+| `transferts_vehicules_occasion` | `transferts-certificats-d-immatriculation-des-vehicules-d-occasion-nc` | `timestamp_transaction`, `numero_immat` | `timestamp_transaction` (3 jours) | 105 484 |
+
+- Export Parquet de l'API filtré côté serveur (`where` sur le curseur), donc typé
+  à la source.
+- Premier chargement d'une table en `replace` (un commit, 116 s pour les
+  véhicules), puis merge `upsert` : dlt découpe l'upsert en commits de 1 000
+  lignes, inutilisable pour un chargement complet (106 commits et plus de 4 min
+  pour les 105 484 transferts).
+- Seconde exécution : 2 lignes extraites pour les véhicules, aucune écriture
+  (upsert sans changement), 4,5 s. Critère « ne recharge que le nouveau » tenu.
+- L'export Parquet de data.gouv.nc tronque `timestamp_transaction` à la seconde
+  (l'API JSON donne les millisecondes). La clé reste unique.
+- Le warehouse annonce l'adresse publique `https://rustfs.tgu.ovh` : Lakekeeper
+  la renvoie avec chaque table, et l'ingestion doit pouvoir tourner hors du
+  cluster. Le Job du chart met à jour le stockage d'un warehouse existant.
+- Piège ArgoCD : modifier seulement un hook (le Job) ne désynchronise pas
+  l'application ; il faut lancer une synchronisation manuelle pour le rejouer.
+
+Reste pour l'étape 1 : projet dbt-trino (1.4) et exécution planifiée (Dagster, D9).
+
 ## Étape 2 — Agent dans le portfolio
 
 But : la section « Interrogez mon AI Factory » du portfolio interroge Trino et
