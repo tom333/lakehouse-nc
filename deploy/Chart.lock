@@ -1,0 +1,9 @@
+dependencies:
+- name: lakekeeper
+  repository: https://lakekeeper.github.io/lakekeeper-charts/
+  version: 0.14.0
+- name: trino
+  repository: https://trinodb.github.io/charts
+  version: 1.45.0
+digest: sha256:e31a0b815e7354616fb57dd3cee3c9d0b3d9b693a8572ebcb7cec4ba724a13a2
+generated: "2026-11-16T09:59:03.915865943+11:00"

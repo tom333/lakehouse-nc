@@ -1,0 +1,79 @@
+# Valeurs du chart lakehouse-nc (namespace lakehouse-nc).
+# Tous les secrets viennent du SealedSecret `lakehouse-nc-secrets`
+# (my-kluster/sealed/lakehouse-nc-secrets.yaml), clés :
+#   postgresql-password, encryptionKey, s3-access-key, s3-secret-key
+
+# Warehouse Iceberg créé par le Job post-déploiement (templates/warehouse-job.yaml).
+warehouse:
+  name: lakehouse
+  bucket: lakehouse-nc
+  s3Endpoint: http://rustfs-svc.ia-lab.svc.cluster.local:9000
+  region: us-east-1
+
+lakekeeper:
+  fullnameOverride: lakekeeper
+  postgresql:
+    enabled: false
+  externalDatabase:
+    host_read: postgresql.datalab.svc.cluster.local
+    host_write: postgresql.datalab.svc.cluster.local
+    database: lakekeeper
+    user: lakekeeper
+    passwordSecret: lakehouse-nc-secrets
+    passwordSecretKey: postgresql-password
+  secretBackend:
+    postgres:
+      encryptionKeySecret: lakehouse-nc-secrets
+      encryptionKeySecretKey: encryptionKey
+  catalog:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        memory: 512Mi
+
+trino:
+  fullnameOverride: trino
+  server:
+    workers: 0
+    config:
+      query:
+        maxMemory: 1GB
+  coordinator:
+    jvm:
+      maxHeapSize: 3G
+    config:
+      nodeScheduler:
+        includeCoordinator: true
+      query:
+        maxMemoryPerNode: 1GB
+    resources:
+      requests:
+        cpu: 250m
+        memory: 4Gi
+      limits:
+        memory: 4Gi
+  env:
+    - name: S3_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: lakehouse-nc-secrets
+          key: s3-access-key
+    - name: S3_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: lakehouse-nc-secrets
+          key: s3-secret-key
+  catalogs:
+    lakehouse: |
+      connector.name=iceberg
+      iceberg.catalog.type=rest
+      iceberg.rest-catalog.uri=http://lakekeeper.lakehouse-nc.svc.cluster.local:8181/catalog
+      iceberg.rest-catalog.warehouse=lakehouse
+      fs.s3.enabled=true
+      s3.endpoint=http://rustfs-svc.ia-lab.svc.cluster.local:9000
+      s3.region=us-east-1
+      s3.path-style-access=true
+      s3.aws-access-key=${ENV:S3_ACCESS_KEY}
+      s3.aws-secret-key=${ENV:S3_SECRET_KEY}

@@ -1,0 +1,34 @@
+# Essai jetable : Lakekeeper local branché sur le RustFS du cluster.
+# Lancer avec `docker compose up -d`, puis `uv run essai.py`.
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: lakekeeper
+      POSTGRES_PASSWORD: essai-local
+      POSTGRES_DB: lakekeeper
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "lakekeeper"]
+      interval: 2s
+      retries: 30
+
+  migrate:
+    image: quay.io/lakekeeper/catalog:v0.15.1
+    command: ["migrate"]
+    environment: &lk-env
+      LAKEKEEPER__PG_DATABASE_URL_READ: postgres://lakekeeper:essai-local@db:5432/lakekeeper
+      LAKEKEEPER__PG_DATABASE_URL_WRITE: postgres://lakekeeper:essai-local@db:5432/lakekeeper
+      LAKEKEEPER__PG_ENCRYPTION_KEY: essai-local-uniquement
+    depends_on:
+      db:
+        condition: service_healthy
+
+  lakekeeper:
+    image: quay.io/lakekeeper/catalog:v0.15.1
+    command: ["serve"]
+    environment: *lk-env
+    ports:
+      - "8181:8181"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully

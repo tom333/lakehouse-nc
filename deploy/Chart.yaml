@@ -1,0 +1,12 @@
+apiVersion: v2
+name: lakehouse-nc
+description: Catalogue Iceberg (Lakekeeper) et moteur SQL (Trino) du lakehouse-nc
+type: application
+version: 0.1.0
+dependencies:
+  - name: lakekeeper
+    version: 0.14.0
+    repository: https://lakekeeper.github.io/lakekeeper-charts/
+  - name: trino
+    version: 1.45.0
+    repository: https://trinodb.github.io/charts
