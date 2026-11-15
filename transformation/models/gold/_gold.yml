@@ -1,0 +1,183 @@
+version: 2
+
+models:
+  - name: dim_date
+    description: Calendrier, un jour par ligne, de 1900 (véhicules de collection) à aujourd'hui.
+    columns:
+      - name: date_jour
+        description: Jour (clé).
+        data_tests: [unique, not_null]
+      - name: annee
+      - name: trimestre
+        description: Trimestre de 1 à 4.
+      - name: mois
+        description: Mois de 1 à 12.
+      - name: libelle_mois
+        description: Nom du mois en français.
+      - name: jour_semaine
+        description: Jour de la semaine, de 1 (lundi) à 7 (dimanche).
+      - name: libelle_jour
+        description: Nom du jour en français.
+
+  - name: dim_commune
+    description: Les communes de Nouvelle-Calédonie et leur province.
+    columns:
+      - name: commune
+        description: Nom de la commune en majuscules (clé), par exemple NOUMEA.
+        data_tests: [unique, not_null]
+      - name: province
+        description: Sud, Nord, Îles Loyauté, ou « Nord et Sud » pour Poya, à cheval sur deux provinces.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [Sud, Nord, Îles Loyauté, Nord et Sud]
+
+  - name: dim_energie
+    description: Sources d'énergie des véhicules, d'après le code de la carte grise.
+    columns:
+      - name: code_energie
+        description: Code de la carte grise (clé), par exemple ES pour essence.
+        data_tests: [unique, not_null]
+      - name: libelle_energie
+        description: Libellé en français.
+      - name: famille_energie
+        description: >
+          Thermique, Hybride, Hybride rechargeable, Électrique, Non renseignée
+          (code « / », qui touche aussi des voitures, donc pas « sans moteur »),
+          ou Inconnue pour les codes rares sans libellé connu (GE, HE).
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [Thermique, Hybride, Hybride rechargeable, Électrique, Non renseignée, Inconnue]
+
+  - name: dim_genre
+    description: Genres de véhicules, d'après le code de la carte grise.
+    columns:
+      - name: code_genre
+        description: Code (clé), par exemple VP pour voiture particulière.
+        data_tests: [unique, not_null]
+      - name: libelle_genre
+        description: Libellé, par exemple VOITURE PARTICULIERE.
+
+  - name: fct_immatriculations
+    description: >
+      Parc de véhicules immatriculés en Nouvelle-Calédonie, un véhicule par
+      ligne. Source : jeu « vehicules-immatricules-nc » de data.gouv.nc.
+    columns:
+      - name: numero_immat
+        description: Numéro d'immatriculation (clé).
+        data_tests: [unique, not_null]
+      - name: date_premiere_circulation_nc
+        description: Première mise en circulation en Nouvelle-Calédonie (vers dim_date).
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_jour
+      - name: date_premiere_circulation
+        description: Première mise en circulation, éventuellement hors de Nouvelle-Calédonie (véhicule importé d'occasion).
+      - name: commune
+        description: Commune du propriétaire (vers dim_commune).
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_commune')
+                field: commune
+      - name: code_energie
+        description: Énergie (vers dim_energie).
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_energie')
+                field: code_energie
+      - name: code_genre
+        description: Genre du véhicule (vers dim_genre).
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_genre')
+                field: code_genre
+      - name: marque
+        description: Marque en majuscules.
+      - name: modele
+        description: Appellation commerciale.
+      - name: carrosserie
+      - name: puissance_administrative_cv
+        description: Puissance fiscale en chevaux fiscaux (NULL si inconnue).
+      - name: puissance_kw
+        description: Puissance réelle en kilowatts.
+      - name: cylindree_cm3
+      - name: nb_places_assises
+      - name: type_proprietaire
+        description: Particulier, ou type de société du propriétaire (par exemple STE - SOCIETE).
+      - name: en_location
+        description: Vrai si le véhicule a un locataire (location longue durée, crédit-bail).
+      - name: statut
+        description: En circulation, Détruit, Exporté, Retiré ou Volé (volé et non retrouvé).
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [En circulation, Détruit, Exporté, Retiré, Volé]
+
+  - name: fct_transferts
+    description: >
+      Ventes de véhicules d'occasion en Nouvelle-Calédonie, un transfert de
+      certificat d'immatriculation par ligne, depuis janvier 2022. Source :
+      jeu « transferts-certificats-d-immatriculation-des-vehicules-d-occasion-nc ».
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [horodatage_transaction, numero_immat]
+    columns:
+      - name: horodatage_transaction
+        description: Horodatage du transfert, à la seconde.
+      - name: date_transaction
+        description: Jour du transfert (vers dim_date).
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_jour
+      - name: numero_immat
+        description: Numéro d'immatriculation du véhicule vendu.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('fct_immatriculations')
+                field: numero_immat
+              config:
+                # 6 transferts portent sur un véhicule absent du parc publié.
+                severity: warn
+      - name: commune
+        description: Commune du nouveau propriétaire (vers dim_commune).
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_commune')
+                field: commune
+      - name: code_energie
+        description: Énergie (vers dim_energie).
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_energie')
+                field: code_energie
+      - name: code_genre
+        description: Genre du véhicule (vers dim_genre).
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_genre')
+                field: code_genre
+      - name: marque
+      - name: modele
+      - name: carrosserie
+      - name: puissance_administrative_cv
+      - name: date_premiere_circulation
+      - name: type_nouveau_proprietaire
+        description: Particulier, ou type de société de l'acquéreur.
+      - name: en_location
+      - name: par_teleservice
+        description: Vrai si le transfert a été fait en ligne.

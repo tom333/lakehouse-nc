@@ -15,6 +15,9 @@
 | D9 | Orchestration par **Dagster** | Thomas, 2026-11-16 (Q3) | Maîtrisé, cohérent avec le CV ; l'application ArgoCD `dagster.yaml.disable` est à réactiver |
 | D10 | **Manifestes Kubernetes dans ce dépôt**, Application ArgoCD dans `my-kluster` | Thomas, 2026-11-16 (Q4) | Même patron que le dépôt `cv` |
 | D11 | Nom **`lakehouse-nc`**, dépôt public sur le compte **`tom333`** | Thomas, 2026-11-16 (Q5) | Sert de preuve publique |
+| D12 | Le warehouse annonce l'**adresse S3 publique** `https://rustfs.tgu.ovh` | Assistant, 2026-11-16 | Lakekeeper la renvoie avec chaque table ; l'adresse interne du cluster empêchait toute ingestion hors du cluster |
+| D13 | Bronze chargé par **dlt (destination `filesystem`, format Iceberg, catalogue REST)** ; premier chargement en `replace`, puis merge `upsert` | Assistant, 2026-11-16 | dlt découpe l'upsert en commits de 1 000 lignes : inutilisable pour un chargement complet, adapté aux incréments quotidiens |
+| D14 | Gold en **modèle en étoile** (`fct_immatriculations`, `fct_transferts`, dimensions date, commune, énergie, genre) | Assistant, 2026-11-16 | Comble le manque « modélisation dimensionnelle » du CV ; colonnes décrites en français pour l'agent |
 
 ## Options écartées
 

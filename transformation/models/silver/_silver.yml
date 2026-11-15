@@ -1,0 +1,18 @@
+version: 2
+
+models:
+  - name: silver_vehicules
+    description: Véhicules immatriculés, nettoyés et typés (dates sentinelles 1901 mises à NULL, province normalisée).
+    columns:
+      - name: numero_immat
+        data_tests: [unique, not_null]
+  - name: silver_transferts
+    description: Transferts de certificats de véhicules d'occasion, communes et énergies alignées sur le jeu des véhicules.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [horodatage_transaction, numero_immat]
+    columns:
+      - name: code_energie
+        description: Code d'énergie retrouvé depuis le libellé de la source.
+        data_tests: [not_null]

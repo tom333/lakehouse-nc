@@ -1,0 +1,21 @@
+name: lakehouse_nc
+version: "1.0.0"
+profile: lakehouse_nc
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  lakehouse_nc:
+    silver:
+      +schema: silver
+      +materialized: table
+    gold:
+      +schema: gold
+      +materialized: table
+
+seeds:
+  lakehouse_nc:
+    +schema: silver

@@ -1,0 +1,10 @@
+version: 2
+
+seeds:
+  - name: energies
+    description: >
+      Codes d'énergie de la carte grise. `libelle_transferts` est le libellé
+      utilisé à la place du code dans le jeu des transferts.
+    columns:
+      - name: code_energie
+        data_tests: [unique, not_null]

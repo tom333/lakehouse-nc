@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: bronze
+    database: lakehouse
+    schema: bronze
+    description: Tables chargées par dlt depuis data.gouv.nc, sans transformation.
+    tables:
+      - name: vehicules_immatricules
+        description: Jeu « vehicules-immatricules-nc » (Gouvernement de la Nouvelle-Calédonie), un véhicule par ligne.
+      - name: transferts_vehicules_occasion
+        description: Jeu « transferts-certificats-d-immatriculation-des-vehicules-d-occasion-nc », un transfert par ligne.

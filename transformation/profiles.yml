@@ -1,0 +1,13 @@
+# Trino du cluster. En local : kubectl -n lakehouse-nc port-forward svc/trino 8080:8080
+lakehouse_nc:
+  target: lakehouse
+  outputs:
+    lakehouse:
+      type: trino
+      method: none
+      host: "{{ env_var('TRINO_HOST', 'localhost') }}"
+      port: "{{ env_var('TRINO_PORT', '8080') | int }}"
+      user: dbt
+      database: lakehouse
+      schema: silver
+      threads: 4

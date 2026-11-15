@@ -1,0 +1,13 @@
+code_energie,libelle,libelle_transferts,famille
+ES,Essence,Essence,Thermique
+GO,Gazole,Gazole,Thermique
+FE,Superéthanol E85,,Thermique
+EG,Bicarburation essence-GPL,Bicarburation essence-GPL,Thermique
+EH,Hybride essence non rechargeable,Essence-électricité (hybride non rechargeable),Hybride
+GH,Hybride gazole non rechargeable,Gazole-électricité (hybride non rechargeable,Hybride
+FH,Hybride superéthanol non rechargeable,Superéthanol-électricité (hybride non rechargeable),Hybride
+EE,Hybride essence rechargeable,Essence électricité (hybride rechargeable),Hybride rechargeable
+EL,Électricité,Electricité,Électrique
+/,Non renseignée,AUCUNE,Non renseignée
+GE,Code GE non documenté,,Inconnue
+HE,Code HE non documenté,,Inconnue

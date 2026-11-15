@@ -96,7 +96,31 @@ catalogue REST Lakekeeper, schéma `bronze`.
 - Piège ArgoCD : modifier seulement un hook (le Job) ne désynchronise pas
   l'application ; il faut lancer une synchronisation manuelle pour le rejouer.
 
-Reste pour l'étape 1 : projet dbt-trino (1.4) et exécution planifiée (Dagster, D9).
+### Résultat de l'étape 1.4 (2026-11-16)
+
+Projet dbt-trino dans `transformation/` (dbt-core 1.12.7, dbt-trino 1.12.0).
+En local : `kubectl -n lakehouse-nc port-forward svc/trino 8080:8080`, puis
+`cd transformation && DBT_PROFILES_DIR=. uv run dbt build`.
+
+- silver : `silver_vehicules`, `silver_transferts` (dates sentinelles 1901 mises
+  à NULL, provinces normalisées, communes et énergies des transferts alignées
+  sur celles des véhicules) ; seed `energies` (codes de la carte grise).
+- gold, modèle en étoile : faits `fct_immatriculations` (un véhicule) et
+  `fct_transferts` (une vente d'occasion) ; dimensions `dim_date` (depuis 1900,
+  le parc compte 178 véhicules d'avant 1950), `dim_commune`, `dim_energie`,
+  `dim_genre`. Colonnes décrites en français pour l'agent.
+- `dbt build` : 8 modèles, 1 seed, 31 tests ; 39 succès, 1 avertissement assumé
+  (6 transferts portent sur un véhicule absent du parc publié).
+- Codes d'énergie `GE` et `HE` (3 véhicules) sans libellé sûr : classés
+  « Inconnue » plutôt qu'inventés. Le code `/` est « Non renseignée » : il touche
+  5 316 voitures particulières, ce n'est donc pas « sans moteur ».
+
+Critères de fin de l'étape 1 tenus : `select` sur gold depuis Trino, `dbt build`
+vert, seconde ingestion limitée au nouveau.
+
+Reste à faire avant l'étape 2 : planifier ingestion puis `dbt build` sur le
+cluster (Dagster, D9). L'application Dagster de `my-kluster` est désactivée et
+partagée avec d'autres projets : décision à prendre avec Thomas.
 
 ## Étape 2 — Agent dans le portfolio
 
