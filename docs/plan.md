@@ -51,6 +51,23 @@ retombait sur l'`appVersion` du chart (1.0.4). Le tag est maintenant épinglé �
 `1.0.5` et suivi par un `customManager` Renovate. Les tags git du chart sortent
 avant l'image Docker (1.0.6 en est un exemple), d'où l'épinglage séparé.
 
+### Résultat de l'étape 1.2 (2026-11-16)
+
+Déployé par ArgoCD (application `lakehouse-nc`, namespace `lakehouse-nc`) :
+Lakekeeper v0.15.0 (base `lakekeeper` dans le PostgreSQL de `datalab`) et
+Trino 484 mono-nœud. Le Job post-déploiement a amorcé Lakekeeper et créé le
+warehouse `lakehouse`.
+
+`scripts/test-fumee-trino.sh` passe : depuis Trino, création d'un schéma et
+d'une table Iceberg, deux insertions, relecture de 3 lignes, 3 snapshots (la
+création de table en produit un vide), suppression.
+
+À reprendre plus tard :
+- les clés S3 de Trino et du warehouse sont les clés admin de RustFS ; créer
+  un utilisateur RustFS limité au bucket `lakehouse-nc` (étape 4) ;
+- Trino n'a ni authentification ni ingress : accessible dans le cluster
+  seulement, jusqu'à l'étape 4.
+
 ## Étape 2 — Agent dans le portfolio
 
 But : la section « Interrogez mon AI Factory » du portfolio interroge Trino et

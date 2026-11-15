@@ -8,8 +8,9 @@ Version légère et publique de l'architecture « datastack » : mêmes principe
 (Trino comme unique porte d'accès, autorisation par OPA, architecture Medallion,
 agent sur données gouvernées), sans catalogue OpenMetadata ni outil de BI.
 
-**État (2026-11-16) : étape 1 en cours.** Stockage validé : Iceberg sur RustFS
-via Lakekeeper (essai dans `essais/stockage-s3/`). Rien n'est encore déployé.
+**État (2026-11-16) : étape 1 en cours.** Lakekeeper et Trino sont déployés en
+GitOps sur le cluster ; Trino lit et écrit des tables Iceberg stockées sur RustFS
+(`scripts/test-fumee-trino.sh`). Aucune donnée de data.gouv.nc n'est encore ingérée.
 
 ## Par où commencer
 

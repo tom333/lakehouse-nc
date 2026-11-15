@@ -4,9 +4,9 @@ Consignes pour un agent de code qui reprend ce projet.
 
 ## État
 
-Projet initié le 2026-11-16. **Aucun déploiement.** Le dépôt contient la
-documentation et un essai jetable (`essais/stockage-s3/`) qui a validé Iceberg
-sur RustFS via Lakekeeper. Aucun commit n'a été fait et le dépôt n'a pas de remote.
+Projet initié le 2026-11-16. Dépôt public `github.com/tom333/lakehouse-nc`.
+Étapes 1.1 (stockage) et 1.2 (Lakekeeper + Trino déployés par ArgoCD, chart
+`deploy/`) terminées. Voir `docs/plan.md` pour le détail et la suite.
 
 ## À lire avant d'agir
 
@@ -18,8 +18,9 @@ sur RustFS via Lakekeeper. Aucun commit n'a été fait et le dépôt n'a pas de 
 
 ## Première action d'une nouvelle session
 
-Q3 à Q5 sont tranchées (D9 à D11). Le stockage RustFS est validé (plan, étape
-1.1). Suite : étape 1.2 (Lakekeeper et Trino en GitOps).
+Lire l'état en tête de `README.md` et la dernière section « Résultat » de
+`docs/plan.md`, puis reprendre l'étape suivante. Vérifier le cluster :
+`kubectl -n lakehouse-nc get pods` et `scripts/test-fumee-trino.sh`.
 
 ## Règles
 
