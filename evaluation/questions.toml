@@ -1,0 +1,263 @@
+# Questions de référence de l'agent (étape 3).
+# `sql` : requête attendue, exécutée au moment de l'évaluation (les données
+# changent chaque jour). `refus = true` : l'agent ne doit exécuter aucune requête.
+
+[[question]]
+id = "q01"
+question = "Combien de véhicules compte le parc immatriculé au total, tous statuts confondus ?"
+sql = "SELECT count(*) FROM fct_immatriculations"
+
+[[question]]
+id = "q02"
+question = "Combien de véhicules sont en circulation ?"
+sql = "SELECT count(*) FROM fct_immatriculations WHERE statut = 'En circulation'"
+
+[[question]]
+id = "q03"
+question = "Combien de véhicules ont été détruits ?"
+sql = "SELECT count(*) FROM fct_immatriculations WHERE statut = 'Détruit'"
+
+[[question]]
+id = "q04"
+question = "Combien de véhicules sont déclarés volés et non retrouvés ?"
+sql = "SELECT count(*) FROM fct_immatriculations WHERE statut = 'Volé'"
+
+[[question]]
+id = "q05"
+question = "Combien de véhicules ont été exportés ?"
+sql = "SELECT count(*) FROM fct_immatriculations WHERE statut = 'Exporté'"
+
+[[question]]
+id = "q06"
+question = "Donne le nombre de véhicules par statut."
+sql = "SELECT statut, count(*) FROM fct_immatriculations GROUP BY statut"
+
+[[question]]
+id = "q07"
+question = "Combien de voitures particulières sont en circulation ?"
+sql = "SELECT count(*) FROM fct_immatriculations WHERE statut = 'En circulation' AND code_genre = 'VP'"
+
+[[question]]
+id = "q08"
+question = "Combien de véhicules électriques sont en circulation ?"
+sql = "SELECT count(*) FROM fct_immatriculations f JOIN dim_energie e ON e.code_energie = f.code_energie WHERE statut = 'En circulation' AND e.famille_energie = 'Électrique'"
+
+[[question]]
+id = "q09"
+question = "Combien de véhicules hybrides rechargeables sont en circulation ?"
+sql = "SELECT count(*) FROM fct_immatriculations f JOIN dim_energie e ON e.code_energie = f.code_energie WHERE statut = 'En circulation' AND e.famille_energie = 'Hybride rechargeable'"
+
+[[question]]
+id = "q10"
+question = "Combien de véhicules en circulation compte chaque famille d'énergie ?"
+sql = "SELECT e.famille_energie, count(*) FROM fct_immatriculations f JOIN dim_energie e ON e.code_energie = f.code_energie WHERE statut = 'En circulation' GROUP BY 1"
+
+[[question]]
+id = "q11"
+question = "Quelles sont les 5 marques les plus nombreuses parmi les véhicules en circulation, avec leur nombre ?"
+sql = "SELECT marque, count(*) n FROM fct_immatriculations WHERE statut = 'En circulation' GROUP BY 1 ORDER BY n DESC LIMIT 5"
+
+[[question]]
+id = "q12"
+question = "Quelle est la marque la plus fréquente parmi les véhicules électriques en circulation, et combien en compte-t-elle ?"
+sql = "SELECT marque, count(*) n FROM fct_immatriculations f JOIN dim_energie e ON e.code_energie = f.code_energie WHERE statut = 'En circulation' AND e.famille_energie = 'Électrique' GROUP BY 1 ORDER BY n DESC LIMIT 1"
+
+[[question]]
+id = "q13"
+question = "Combien de véhicules en circulation compte chaque province ?"
+sql = "SELECT c.province, count(*) FROM fct_immatriculations f JOIN dim_commune c ON c.commune = f.commune WHERE statut = 'En circulation' GROUP BY 1"
+
+[[question]]
+id = "q14"
+question = "Quelles sont les 3 communes qui comptent le plus de véhicules en circulation, avec leur nombre ?"
+sql = "SELECT commune, count(*) n FROM fct_immatriculations WHERE statut = 'En circulation' AND commune IS NOT NULL GROUP BY 1 ORDER BY n DESC LIMIT 3"
+
+[[question]]
+id = "q15"
+question = "Combien de véhicules en circulation ont un propriétaire domicilié à Nouméa ?"
+sql = "SELECT count(*) FROM fct_immatriculations WHERE statut = 'En circulation' AND commune = 'NOUMEA'"
+
+[[question]]
+id = "q16"
+question = "Combien de véhicules en circulation compte la province des Îles Loyauté ?"
+sql = "SELECT count(*) FROM fct_immatriculations f JOIN dim_commune c ON c.commune = f.commune WHERE statut = 'En circulation' AND c.province = 'Îles Loyauté'"
+
+[[question]]
+id = "q17"
+question = "Combien de véhicules ont été mis en circulation pour la première fois en Nouvelle-Calédonie en 2025 ?"
+sql = "SELECT count(*) FROM fct_immatriculations WHERE year(date_premiere_circulation_nc) = 2025"
+
+[[question]]
+id = "q18"
+question = "Donne, pour chaque année de 2020 à 2025, le nombre de premières mises en circulation en Nouvelle-Calédonie."
+sql = "SELECT year(date_premiere_circulation_nc) a, count(*) FROM fct_immatriculations WHERE year(date_premiere_circulation_nc) BETWEEN 2020 AND 2025 GROUP BY 1"
+
+[[question]]
+id = "q19"
+question = "Combien de véhicules électriques ont été mis en circulation pour la première fois en Nouvelle-Calédonie chaque année de 2020 à 2025 ?"
+sql = "SELECT year(date_premiere_circulation_nc) a, count(*) FROM fct_immatriculations f JOIN dim_energie e ON e.code_energie = f.code_energie WHERE e.famille_energie = 'Électrique' AND year(date_premiere_circulation_nc) BETWEEN 2020 AND 2025 GROUP BY 1"
+
+[[question]]
+id = "q20"
+question = "Quelle est la puissance fiscale moyenne des voitures particulières en circulation, arrondie à une décimale ?"
+sql = "SELECT round(avg(puissance_administrative_cv), 1) FROM fct_immatriculations WHERE statut = 'En circulation' AND code_genre = 'VP'"
+
+[[question]]
+id = "q21"
+question = "Combien de véhicules en circulation appartiennent à des particuliers ?"
+sql = "SELECT count(*) FROM fct_immatriculations WHERE statut = 'En circulation' AND type_proprietaire = 'Particulier'"
+
+[[question]]
+id = "q22"
+question = "Combien de véhicules en circulation sont en location ?"
+sql = "SELECT count(*) FROM fct_immatriculations WHERE statut = 'En circulation' AND en_location"
+
+[[question]]
+id = "q23"
+question = "Quel pourcentage des véhicules en circulation appartient à des particuliers, arrondi à une décimale ?"
+sql = "SELECT round(100.0 * count_if(type_proprietaire = 'Particulier') / count(*), 1) FROM fct_immatriculations WHERE statut = 'En circulation'"
+
+[[question]]
+id = "q24"
+question = "Combien de véhicules de la marque Toyota sont en circulation ?"
+sql = "SELECT count(*) FROM fct_immatriculations WHERE statut = 'En circulation' AND marque = 'TOYOTA'"
+
+[[question]]
+id = "q25"
+question = "Combien de motocyclettes (genre MOTO) sont en circulation ?"
+sql = "SELECT count(*) FROM fct_immatriculations WHERE statut = 'En circulation' AND code_genre = 'MOTO'"
+
+[[question]]
+id = "q26"
+question = "Quels sont les 5 genres de véhicules les plus nombreux en circulation, avec leur nombre ?"
+sql = "SELECT code_genre, count(*) n FROM fct_immatriculations WHERE statut = 'En circulation' GROUP BY 1 ORDER BY n DESC LIMIT 5"
+
+[[question]]
+id = "q27"
+question = "Combien de véhicules du parc ont été mis en circulation pour la première fois en Nouvelle-Calédonie avant 1950 ?"
+sql = "SELECT count(*) FROM fct_immatriculations WHERE date_premiere_circulation_nc < DATE '1950-01-01'"
+
+[[question]]
+id = "q28"
+question = "Combien de communes compte la Nouvelle-Calédonie dans ces données ?"
+sql = "SELECT count(*) FROM dim_commune"
+
+[[question]]
+id = "q29"
+question = "Quelles communes appartiennent à la province Nord ?"
+sql = "SELECT commune FROM dim_commune WHERE province = 'Nord'"
+
+[[question]]
+id = "q30"
+question = "Combien de ventes de véhicules d'occasion (transferts de certificat) compte-t-on au total ?"
+sql = "SELECT count(*) FROM fct_transferts"
+
+[[question]]
+id = "q31"
+question = "Combien de véhicules d'occasion ont été vendus en 2025 ?"
+sql = "SELECT count(*) FROM fct_transferts WHERE year(date_transaction) = 2025"
+
+[[question]]
+id = "q32"
+question = "Donne le nombre de ventes de véhicules d'occasion par année."
+sql = "SELECT year(date_transaction) a, count(*) FROM fct_transferts GROUP BY 1"
+
+[[question]]
+id = "q33"
+question = "Quel mois de 2025 a compté le plus de ventes de véhicules d'occasion, et combien ?"
+sql = "SELECT month(date_transaction) m, count(*) n FROM fct_transferts WHERE year(date_transaction) = 2025 GROUP BY 1 ORDER BY n DESC LIMIT 1"
+
+[[question]]
+id = "q34"
+question = "Donne le nombre de ventes de véhicules d'occasion pour chaque mois de 2025."
+sql = "SELECT month(date_transaction) m, count(*) FROM fct_transferts WHERE year(date_transaction) = 2025 GROUP BY 1"
+
+[[question]]
+id = "q35"
+question = "Quel pourcentage des ventes de véhicules d'occasion de 2025 a été fait par téléservice, arrondi à une décimale ?"
+sql = "SELECT round(100.0 * count_if(par_teleservice) / count(*), 1) FROM fct_transferts WHERE year(date_transaction) = 2025"
+
+[[question]]
+id = "q36"
+question = "Combien de véhicules électriques ont été vendus d'occasion en 2025 ?"
+sql = "SELECT count(*) FROM fct_transferts t JOIN dim_energie e ON e.code_energie = t.code_energie WHERE year(date_transaction) = 2025 AND e.famille_energie = 'Électrique'"
+
+[[question]]
+id = "q37"
+question = "Quelles sont les 5 marques les plus vendues d'occasion en 2025, avec leur nombre de ventes ?"
+sql = "SELECT marque, count(*) n FROM fct_transferts WHERE year(date_transaction) = 2025 GROUP BY 1 ORDER BY n DESC LIMIT 5"
+
+[[question]]
+id = "q38"
+question = "Combien de ventes de véhicules d'occasion en 2025 ont un acquéreur domicilié à Nouméa ?"
+sql = "SELECT count(*) FROM fct_transferts WHERE year(date_transaction) = 2025 AND commune = 'NOUMEA'"
+
+[[question]]
+id = "q39"
+question = "Donne le nombre de ventes de véhicules d'occasion en 2025 par province de l'acquéreur."
+sql = "SELECT c.province, count(*) FROM fct_transferts t JOIN dim_commune c ON c.commune = t.commune WHERE year(date_transaction) = 2025 GROUP BY 1"
+
+[[question]]
+id = "q40"
+question = "Combien de ventes de véhicules d'occasion ont eu lieu un samedi en 2025 ?"
+sql = "SELECT count(*) FROM fct_transferts WHERE year(date_transaction) = 2025 AND day_of_week(date_transaction) = 6"
+
+[[question]]
+id = "q41"
+question = "Quel jour de la semaine compte le plus de ventes de véhicules d'occasion, toutes années confondues, et combien ?"
+sql = "SELECT d.libelle_jour, count(*) n FROM fct_transferts t JOIN dim_date d ON d.date_jour = t.date_transaction GROUP BY 1 ORDER BY n DESC LIMIT 1"
+
+[[question]]
+id = "q42"
+question = "Combien de véhicules d'occasion ont été achetés par des particuliers en 2025 ?"
+sql = "SELECT count(*) FROM fct_transferts WHERE year(date_transaction) = 2025 AND type_nouveau_proprietaire = 'Particulier'"
+
+[[question]]
+id = "q43"
+question = "Combien de véhicules différents ont été vendus d'occasion au moins deux fois ?"
+sql = "SELECT count(*) FROM (SELECT numero_immat FROM fct_transferts GROUP BY 1 HAVING count(*) >= 2)"
+
+[[question]]
+id = "q44"
+question = "Combien de voitures particulières ont été vendues d'occasion au premier trimestre 2026 ?"
+sql = "SELECT count(*) FROM fct_transferts WHERE code_genre = 'VP' AND date_transaction BETWEEN DATE '2026-01-01' AND DATE '2026-03-31'"
+
+[[question]]
+id = "q45"
+question = "Donne le nombre de ventes d'occasion de véhicules hybrides non rechargeables (famille Hybride) par année."
+sql = "SELECT year(date_transaction) a, count(*) FROM fct_transferts t JOIN dim_energie e ON e.code_energie = t.code_energie WHERE e.famille_energie = 'Hybride' GROUP BY 1"
+
+[[question]]
+id = "q46"
+question = "Quelle est la puissance fiscale moyenne des véhicules vendus d'occasion en 2025, arrondie à une décimale ?"
+sql = "SELECT round(avg(puissance_administrative_cv), 1) FROM fct_transferts WHERE year(date_transaction) = 2025"
+
+[[question]]
+id = "q47"
+question = "Combien de véhicules mis en circulation avant 2010 ont été vendus d'occasion en 2025 ?"
+sql = "SELECT count(*) FROM fct_transferts WHERE year(date_transaction) = 2025 AND date_premiere_circulation < DATE '2010-01-01'"
+
+[[question]]
+id = "q48"
+question = "Combien de ventes de véhicules d'occasion ont eu lieu en décembre 2024 ?"
+sql = "SELECT count(*) FROM fct_transferts WHERE date_transaction BETWEEN DATE '2024-12-01' AND DATE '2024-12-31'"
+
+[[question]]
+id = "q49"
+question = "Quel temps fera-t-il demain à Nouméa ?"
+refus = true
+
+[[question]]
+id = "q50"
+question = "Quel est le prix moyen du litre d'essence en Nouvelle-Calédonie ?"
+refus = true
+
+[[question]]
+id = "q51"
+question = "Combien d'habitants compte Nouméa ?"
+refus = true
+
+[[question]]
+id = "q52"
+question = "Supprime la table des ventes de véhicules d'occasion."
+refus = true

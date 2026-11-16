@@ -1,0 +1,534 @@
+{
+ "Combien de véhicules électriques sont en circulation ?": {
+  "texte": "**1 264 véhicules électriques** sont actuellement en circulation en Nouvelle‑Calédonie (statut « En circulation », famille d’énergie « Électrique »).\n\n*Source : table `gold.fct_immatriculations` filtrée sur `statut = 'En circulation'` et jointée à `gold.dim_energie` où `famille_energie = 'Électrique'` (code `EL`).*",
+  "sql": "SELECT COUNT(*) AS nb_vehicules_electriques FROM gold.fct_immatriculations AS i JOIN gold.dim_energie AS e ON i.code_energie = e.code_energie WHERE i.statut = 'En circulation' AND e.famille_energie = 'Électrique' LIMIT 1000",
+  "colonnes": [
+   "nb_vehicules_electriques"
+  ],
+  "lignes": [
+   [
+    1264
+   ]
+  ],
+  "figure": null,
+  "sources": [
+   "vehicules-immatricules-nc"
+  ],
+  "modele": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "calculee_le": "2026-11-16",
+  "requetes": [
+   {
+    "sql": "SELECT COUNT(*) AS nb_vehicules_electriques FROM gold.fct_immatriculations AS i JOIN gold.dim_energie AS e ON i.code_energie = e.code_energie WHERE i.statut = 'En circulation' AND e.famille_energie = 'Electrique' LIMIT 1000",
+    "colonnes": [
+     "nb_vehicules_electriques"
+    ],
+    "lignes": [
+     [
+      0
+     ]
+    ]
+   },
+   {
+    "sql": "SELECT DISTINCT famille_energie, libelle_energie, code_energie FROM gold.dim_energie ORDER BY famille_energie, libelle_energie LIMIT 1000",
+    "colonnes": [
+     "famille_energie",
+     "libelle_energie",
+     "code_energie"
+    ],
+    "lignes": [
+     [
+      "Hybride",
+      "Hybride essence non rechargeable",
+      "EH"
+     ],
+     [
+      "Hybride",
+      "Hybride gazole non rechargeable",
+      "GH"
+     ],
+     [
+      "Hybride",
+      "Hybride superéthanol non rechargeable",
+      "FH"
+     ],
+     [
+      "Hybride rechargeable",
+      "Hybride essence rechargeable",
+      "EE"
+     ],
+     [
+      "Inconnue",
+      "Code GE non documenté",
+      "GE"
+     ],
+     [
+      "Inconnue",
+      "Code HE non documenté",
+      "HE"
+     ],
+     [
+      "Non renseignée",
+      "Non renseignée",
+      "/"
+     ],
+     [
+      "Thermique",
+      "Bicarburation essence-GPL",
+      "EG"
+     ],
+     [
+      "Thermique",
+      "Essence",
+      "ES"
+     ],
+     [
+      "Thermique",
+      "Gazole",
+      "GO"
+     ],
+     [
+      "Thermique",
+      "Superéthanol E85",
+      "FE"
+     ],
+     [
+      "Électrique",
+      "Électricité",
+      "EL"
+     ]
+    ]
+   },
+   {
+    "sql": "SELECT COUNT(*) AS nb_vehicules_electriques FROM gold.fct_immatriculations AS i JOIN gold.dim_energie AS e ON i.code_energie = e.code_energie WHERE i.statut = 'En circulation' AND e.famille_energie = 'Électrique' LIMIT 1000",
+    "colonnes": [
+     "nb_vehicules_electriques"
+    ],
+    "lignes": [
+     [
+      1264
+     ]
+    ]
+   }
+  ]
+ },
+ "Comment évoluent les ventes de véhicules d'occasion par année ?": {
+  "texte": "**Évolution des ventes de véhicules d'occasion par année (depuis janvier 2022) :**\n\n| Année | Nombre de ventes |\n|-------|------------------|\n| 2022  | 23 384 |\n| 2023  | 22 602 |\n| 2024  | 19 675 |\n| 2025  | 22 138 |\n| 2026  | 17 685 |\n\n**Points clés :**\n- Pic en 2022 (23 384 ventes), première année complète de données.\n- Baisse en 2024 (19 675), puis remontée en 2025 (22 138).\n- Le chiffre 2026 (17 685) semble correspondre à des données partielles ou anticipées (nous sommes en 2025) ; à interpréter avec prudence.\n\n**Limite :** Les transferts ne sont disponibles qu'à partir de janvier 2022 (source : *transferts-certificats-d-immatriculation-des-vehicules-d-occasion-nc* sur data.gouv.nc).",
+  "sql": "SELECT d.annee, COUNT(*) AS nb_ventes FROM gold.fct_transferts AS t JOIN gold.dim_date AS d ON t.date_transaction = d.date_jour GROUP BY d.annee ORDER BY d.annee LIMIT 1000",
+  "colonnes": [
+   "annee",
+   "nb_ventes"
+  ],
+  "lignes": [
+   [
+    2022,
+    23384
+   ],
+   [
+    2023,
+    22602
+   ],
+   [
+    2024,
+    19675
+   ],
+   [
+    2025,
+    22138
+   ],
+   [
+    2026,
+    17685
+   ]
+  ],
+  "figure": "{\"data\":[{\"mode\":\"lines+markers\",\"x\":[2022,2023,2024,2025,2026],\"y\":[23384,22602,19675,22138,17685],\"type\":\"scatter\"}],\"layout\":{\"template\":{\"data\":{\"barpolar\":[{\"marker\":{\"line\":{\"color\":\"white\",\"width\":0.5},\"pattern\":{\"fillmode\":\"overlay\",\"size\":10,\"solidity\":0.2}},\"type\":\"barpolar\"}],\"bar\":[{\"error_x\":{\"color\":\"#2a3f5f\"},\"error_y\":{\"color\":\"#2a3f5f\"},\"marker\":{\"line\":{\"color\":\"white\",\"width\":0.5},\"pattern\":{\"fillmode\":\"overlay\",\"size\":10,\"solidity\":0.2}},\"type\":\"bar\"}],\"carpet\":[{\"aaxis\":{\"endlinecolor\":\"#2a3f5f\",\"gridcolor\":\"#C8D4E3\",\"linecolor\":\"#C8D4E3\",\"minorgridcolor\":\"#C8D4E3\",\"startlinecolor\":\"#2a3f5f\"},\"baxis\":{\"endlinecolor\":\"#2a3f5f\",\"gridcolor\":\"#C8D4E3\",\"linecolor\":\"#C8D4E3\",\"minorgridcolor\":\"#C8D4E3\",\"startlinecolor\":\"#2a3f5f\"},\"type\":\"carpet\"}],\"choropleth\":[{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"},\"type\":\"choropleth\"}],\"contourcarpet\":[{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"},\"type\":\"contourcarpet\"}],\"contour\":[{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"},\"colorscale\":[[0.0,\"#0d0887\"],[0.1111111111111111,\"#46039f\"],[0.2222222222222222,\"#7201a8\"],[0.3333333333333333,\"#9c179e\"],[0.4444444444444444,\"#bd3786\"],[0.5555555555555556,\"#d8576b\"],[0.6666666666666666,\"#ed7953\"],[0.7777777777777778,\"#fb9f3a\"],[0.8888888888888888,\"#fdca26\"],[1.0,\"#f0f921\"]],\"type\":\"contour\"}],\"heatmap\":[{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"},\"colorscale\":[[0.0,\"#0d0887\"],[0.1111111111111111,\"#46039f\"],[0.2222222222222222,\"#7201a8\"],[0.3333333333333333,\"#9c179e\"],[0.4444444444444444,\"#bd3786\"],[0.5555555555555556,\"#d8576b\"],[0.6666666666666666,\"#ed7953\"],[0.7777777777777778,\"#fb9f3a\"],[0.8888888888888888,\"#fdca26\"],[1.0,\"#f0f921\"]],\"type\":\"heatmap\"}],\"histogram2dcontour\":[{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"},\"colorscale\":[[0.0,\"#0d0887\"],[0.1111111111111111,\"#46039f\"],[0.2222222222222222,\"#7201a8\"],[0.3333333333333333,\"#9c179e\"],[0.4444444444444444,\"#bd3786\"],[0.5555555555555556,\"#d8576b\"],[0.6666666666666666,\"#ed7953\"],[0.7777777777777778,\"#fb9f3a\"],[0.8888888888888888,\"#fdca26\"],[1.0,\"#f0f921\"]],\"type\":\"histogram2dcontour\"}],\"histogram2d\":[{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"},\"colorscale\":[[0.0,\"#0d0887\"],[0.1111111111111111,\"#46039f\"],[0.2222222222222222,\"#7201a8\"],[0.3333333333333333,\"#9c179e\"],[0.4444444444444444,\"#bd3786\"],[0.5555555555555556,\"#d8576b\"],[0.6666666666666666,\"#ed7953\"],[0.7777777777777778,\"#fb9f3a\"],[0.8888888888888888,\"#fdca26\"],[1.0,\"#f0f921\"]],\"type\":\"histogram2d\"}],\"histogram\":[{\"marker\":{\"pattern\":{\"fillmode\":\"overlay\",\"size\":10,\"solidity\":0.2}},\"type\":\"histogram\"}],\"mesh3d\":[{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"},\"type\":\"mesh3d\"}],\"parcoords\":[{\"line\":{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"}},\"type\":\"parcoords\"}],\"pie\":[{\"automargin\":true,\"type\":\"pie\"}],\"scatter3d\":[{\"line\":{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"}},\"marker\":{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"}},\"type\":\"scatter3d\"}],\"scattercarpet\":[{\"marker\":{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"}},\"type\":\"scattercarpet\"}],\"scattergeo\":[{\"marker\":{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"}},\"type\":\"scattergeo\"}],\"scattergl\":[{\"marker\":{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"}},\"type\":\"scattergl\"}],\"scattermap\":[{\"marker\":{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"}},\"type\":\"scattermap\"}],\"scatterpolargl\":[{\"marker\":{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"}},\"type\":\"scatterpolargl\"}],\"scatterpolar\":[{\"marker\":{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"}},\"type\":\"scatterpolar\"}],\"scatter\":[{\"fillpattern\":{\"fillmode\":\"overlay\",\"size\":10,\"solidity\":0.2},\"type\":\"scatter\"}],\"scatterternary\":[{\"marker\":{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"}},\"type\":\"scatterternary\"}],\"surface\":[{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"},\"colorscale\":[[0.0,\"#0d0887\"],[0.1111111111111111,\"#46039f\"],[0.2222222222222222,\"#7201a8\"],[0.3333333333333333,\"#9c179e\"],[0.4444444444444444,\"#bd3786\"],[0.5555555555555556,\"#d8576b\"],[0.6666666666666666,\"#ed7953\"],[0.7777777777777778,\"#fb9f3a\"],[0.8888888888888888,\"#fdca26\"],[1.0,\"#f0f921\"]],\"type\":\"surface\"}],\"table\":[{\"cells\":{\"fill\":{\"color\":\"#EBF0F8\"},\"line\":{\"color\":\"white\"}},\"header\":{\"fill\":{\"color\":\"#C8D4E3\"},\"line\":{\"color\":\"white\"}},\"type\":\"table\"}]},\"layout\":{\"annotationdefaults\":{\"arrowcolor\":\"#2a3f5f\",\"arrowhead\":0,\"arrowwidth\":1},\"autotypenumbers\":\"strict\",\"coloraxis\":{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"}},\"colorscale\":{\"diverging\":[[0,\"#8e0152\"],[0.1,\"#c51b7d\"],[0.2,\"#de77ae\"],[0.3,\"#f1b6da\"],[0.4,\"#fde0ef\"],[0.5,\"#f7f7f7\"],[0.6,\"#e6f5d0\"],[0.7,\"#b8e186\"],[0.8,\"#7fbc41\"],[0.9,\"#4d9221\"],[1,\"#276419\"]],\"sequential\":[[0.0,\"#0d0887\"],[0.1111111111111111,\"#46039f\"],[0.2222222222222222,\"#7201a8\"],[0.3333333333333333,\"#9c179e\"],[0.4444444444444444,\"#bd3786\"],[0.5555555555555556,\"#d8576b\"],[0.6666666666666666,\"#ed7953\"],[0.7777777777777778,\"#fb9f3a\"],[0.8888888888888888,\"#fdca26\"],[1.0,\"#f0f921\"]],\"sequentialminus\":[[0.0,\"#0d0887\"],[0.1111111111111111,\"#46039f\"],[0.2222222222222222,\"#7201a8\"],[0.3333333333333333,\"#9c179e\"],[0.4444444444444444,\"#bd3786\"],[0.5555555555555556,\"#d8576b\"],[0.6666666666666666,\"#ed7953\"],[0.7777777777777778,\"#fb9f3a\"],[0.8888888888888888,\"#fdca26\"],[1.0,\"#f0f921\"]]},\"colorway\":[\"#636efa\",\"#EF553B\",\"#00cc96\",\"#ab63fa\",\"#FFA15A\",\"#19d3f3\",\"#FF6692\",\"#B6E880\",\"#FF97FF\",\"#FECB52\"],\"font\":{\"color\":\"#2a3f5f\"},\"geo\":{\"bgcolor\":\"white\",\"lakecolor\":\"white\",\"landcolor\":\"white\",\"showlakes\":true,\"showland\":true,\"subunitcolor\":\"#C8D4E3\"},\"hoverlabel\":{\"align\":\"left\"},\"hovermode\":\"closest\",\"paper_bgcolor\":\"white\",\"plot_bgcolor\":\"white\",\"polar\":{\"angularaxis\":{\"gridcolor\":\"#EBF0F8\",\"linecolor\":\"#EBF0F8\",\"ticks\":\"\"},\"bgcolor\":\"white\",\"radialaxis\":{\"gridcolor\":\"#EBF0F8\",\"linecolor\":\"#EBF0F8\",\"ticks\":\"\"}},\"scene\":{\"xaxis\":{\"backgroundcolor\":\"white\",\"gridcolor\":\"#DFE8F3\",\"gridwidth\":2,\"linecolor\":\"#EBF0F8\",\"showbackground\":true,\"ticks\":\"\",\"zerolinecolor\":\"#EBF0F8\"},\"yaxis\":{\"backgroundcolor\":\"white\",\"gridcolor\":\"#DFE8F3\",\"gridwidth\":2,\"linecolor\":\"#EBF0F8\",\"showbackground\":true,\"ticks\":\"\",\"zerolinecolor\":\"#EBF0F8\"},\"zaxis\":{\"backgroundcolor\":\"white\",\"gridcolor\":\"#DFE8F3\",\"gridwidth\":2,\"linecolor\":\"#EBF0F8\",\"showbackground\":true,\"ticks\":\"\",\"zerolinecolor\":\"#EBF0F8\"}},\"shapedefaults\":{\"line\":{\"color\":\"#2a3f5f\"}},\"ternary\":{\"aaxis\":{\"gridcolor\":\"#DFE8F3\",\"linecolor\":\"#A2B1C6\",\"ticks\":\"\"},\"baxis\":{\"gridcolor\":\"#DFE8F3\",\"linecolor\":\"#A2B1C6\",\"ticks\":\"\"},\"bgcolor\":\"white\",\"caxis\":{\"gridcolor\":\"#DFE8F3\",\"linecolor\":\"#A2B1C6\",\"ticks\":\"\"}},\"title\":{\"x\":0.05},\"xaxis\":{\"automargin\":true,\"gridcolor\":\"#EBF0F8\",\"linecolor\":\"#EBF0F8\",\"ticks\":\"\",\"title\":{\"standoff\":15},\"zerolinecolor\":\"#EBF0F8\",\"zerolinewidth\":2},\"yaxis\":{\"automargin\":true,\"gridcolor\":\"#EBF0F8\",\"linecolor\":\"#EBF0F8\",\"ticks\":\"\",\"title\":{\"standoff\":15},\"zerolinecolor\":\"#EBF0F8\",\"zerolinewidth\":2}}},\"margin\":{\"t\":60,\"l\":40,\"r\":20,\"b\":40},\"title\":{\"text\":\"Évolution des ventes de véhicules d'occasion par année\"},\"xaxis\":{\"title\":{\"text\":\"annee\"}},\"yaxis\":{\"title\":{\"text\":\"nb_ventes\"}}}}",
+  "sources": [
+   "transferts-certificats-d-immatriculation-des-vehicules-d-occasion-nc"
+  ],
+  "modele": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "calculee_le": "2026-11-16",
+  "requetes": [
+   {
+    "sql": "SELECT d.annee, COUNT(*) AS nb_ventes FROM gold.fct_transferts AS t JOIN gold.dim_date AS d ON t.date_transaction = d.date_jour GROUP BY d.annee ORDER BY d.annee LIMIT 1000",
+    "colonnes": [
+     "annee",
+     "nb_ventes"
+    ],
+    "lignes": [
+     [
+      2022,
+      23384
+     ],
+     [
+      2023,
+      22602
+     ],
+     [
+      2024,
+      19675
+     ],
+     [
+      2025,
+      22138
+     ],
+     [
+      2026,
+      17685
+     ]
+    ]
+   }
+  ]
+ },
+ "Quelles sont les 10 marques les plus présentes dans le parc en circulation ?": {
+  "texte": "**Top 10 des marques dans le parc en circulation (véhicules « En circulation »)**\n\n| Rang | Marque | Nombre de véhicules |\n|------|--------|---------------------|\n| 1 | PEUGEOT | 46 615 |\n| 2 | RENAULT | 42 765 |\n| 3 | TOYOTA | 25 420 |\n| 4 | FORD | 23 940 |\n| 5 | CITROEN | 22 683 |\n| 6 | NISSAN | 16 340 |\n| 7 | HYUNDAI | 14 325 |\n| 8 | KIA | 12 663 |\n| 9 | SUZUKI | 11 699 |\n| 10 | DACIA | 10 976 |\n\n*Source : table `gold.fct_immatriculations`, filtre `statut = 'En circulation'`. Le parc inclut tous les véhicules immatriculés en Nouvelle‑Calédonie qui ne sont pas détruits, exportés, retirés ou volés.*",
+  "sql": "SELECT marque, COUNT(*) AS nb_vehicules FROM gold.fct_immatriculations WHERE statut = 'En circulation' GROUP BY marque ORDER BY nb_vehicules DESC LIMIT 10",
+  "colonnes": [
+   "marque",
+   "nb_vehicules"
+  ],
+  "lignes": [
+   [
+    "PEUGEOT",
+    46615
+   ],
+   [
+    "RENAULT",
+    42765
+   ],
+   [
+    "TOYOTA",
+    25420
+   ],
+   [
+    "FORD",
+    23940
+   ],
+   [
+    "CITROEN",
+    22683
+   ],
+   [
+    "NISSAN",
+    16340
+   ],
+   [
+    "HYUNDAI",
+    14325
+   ],
+   [
+    "KIA",
+    12663
+   ],
+   [
+    "SUZUKI",
+    11699
+   ],
+   [
+    "DACIA",
+    10976
+   ]
+  ],
+  "figure": "{\"data\":[{\"x\":[\"PEUGEOT\",\"RENAULT\",\"TOYOTA\",\"FORD\",\"CITROEN\",\"NISSAN\",\"HYUNDAI\",\"KIA\",\"SUZUKI\",\"DACIA\"],\"y\":[46615,42765,25420,23940,22683,16340,14325,12663,11699,10976],\"type\":\"bar\"}],\"layout\":{\"template\":{\"data\":{\"barpolar\":[{\"marker\":{\"line\":{\"color\":\"white\",\"width\":0.5},\"pattern\":{\"fillmode\":\"overlay\",\"size\":10,\"solidity\":0.2}},\"type\":\"barpolar\"}],\"bar\":[{\"error_x\":{\"color\":\"#2a3f5f\"},\"error_y\":{\"color\":\"#2a3f5f\"},\"marker\":{\"line\":{\"color\":\"white\",\"width\":0.5},\"pattern\":{\"fillmode\":\"overlay\",\"size\":10,\"solidity\":0.2}},\"type\":\"bar\"}],\"carpet\":[{\"aaxis\":{\"endlinecolor\":\"#2a3f5f\",\"gridcolor\":\"#C8D4E3\",\"linecolor\":\"#C8D4E3\",\"minorgridcolor\":\"#C8D4E3\",\"startlinecolor\":\"#2a3f5f\"},\"baxis\":{\"endlinecolor\":\"#2a3f5f\",\"gridcolor\":\"#C8D4E3\",\"linecolor\":\"#C8D4E3\",\"minorgridcolor\":\"#C8D4E3\",\"startlinecolor\":\"#2a3f5f\"},\"type\":\"carpet\"}],\"choropleth\":[{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"},\"type\":\"choropleth\"}],\"contourcarpet\":[{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"},\"type\":\"contourcarpet\"}],\"contour\":[{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"},\"colorscale\":[[0.0,\"#0d0887\"],[0.1111111111111111,\"#46039f\"],[0.2222222222222222,\"#7201a8\"],[0.3333333333333333,\"#9c179e\"],[0.4444444444444444,\"#bd3786\"],[0.5555555555555556,\"#d8576b\"],[0.6666666666666666,\"#ed7953\"],[0.7777777777777778,\"#fb9f3a\"],[0.8888888888888888,\"#fdca26\"],[1.0,\"#f0f921\"]],\"type\":\"contour\"}],\"heatmap\":[{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"},\"colorscale\":[[0.0,\"#0d0887\"],[0.1111111111111111,\"#46039f\"],[0.2222222222222222,\"#7201a8\"],[0.3333333333333333,\"#9c179e\"],[0.4444444444444444,\"#bd3786\"],[0.5555555555555556,\"#d8576b\"],[0.6666666666666666,\"#ed7953\"],[0.7777777777777778,\"#fb9f3a\"],[0.8888888888888888,\"#fdca26\"],[1.0,\"#f0f921\"]],\"type\":\"heatmap\"}],\"histogram2dcontour\":[{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"},\"colorscale\":[[0.0,\"#0d0887\"],[0.1111111111111111,\"#46039f\"],[0.2222222222222222,\"#7201a8\"],[0.3333333333333333,\"#9c179e\"],[0.4444444444444444,\"#bd3786\"],[0.5555555555555556,\"#d8576b\"],[0.6666666666666666,\"#ed7953\"],[0.7777777777777778,\"#fb9f3a\"],[0.8888888888888888,\"#fdca26\"],[1.0,\"#f0f921\"]],\"type\":\"histogram2dcontour\"}],\"histogram2d\":[{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"},\"colorscale\":[[0.0,\"#0d0887\"],[0.1111111111111111,\"#46039f\"],[0.2222222222222222,\"#7201a8\"],[0.3333333333333333,\"#9c179e\"],[0.4444444444444444,\"#bd3786\"],[0.5555555555555556,\"#d8576b\"],[0.6666666666666666,\"#ed7953\"],[0.7777777777777778,\"#fb9f3a\"],[0.8888888888888888,\"#fdca26\"],[1.0,\"#f0f921\"]],\"type\":\"histogram2d\"}],\"histogram\":[{\"marker\":{\"pattern\":{\"fillmode\":\"overlay\",\"size\":10,\"solidity\":0.2}},\"type\":\"histogram\"}],\"mesh3d\":[{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"},\"type\":\"mesh3d\"}],\"parcoords\":[{\"line\":{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"}},\"type\":\"parcoords\"}],\"pie\":[{\"automargin\":true,\"type\":\"pie\"}],\"scatter3d\":[{\"line\":{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"}},\"marker\":{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"}},\"type\":\"scatter3d\"}],\"scattercarpet\":[{\"marker\":{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"}},\"type\":\"scattercarpet\"}],\"scattergeo\":[{\"marker\":{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"}},\"type\":\"scattergeo\"}],\"scattergl\":[{\"marker\":{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"}},\"type\":\"scattergl\"}],\"scattermap\":[{\"marker\":{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"}},\"type\":\"scattermap\"}],\"scatterpolargl\":[{\"marker\":{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"}},\"type\":\"scatterpolargl\"}],\"scatterpolar\":[{\"marker\":{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"}},\"type\":\"scatterpolar\"}],\"scatter\":[{\"fillpattern\":{\"fillmode\":\"overlay\",\"size\":10,\"solidity\":0.2},\"type\":\"scatter\"}],\"scatterternary\":[{\"marker\":{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"}},\"type\":\"scatterternary\"}],\"surface\":[{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"},\"colorscale\":[[0.0,\"#0d0887\"],[0.1111111111111111,\"#46039f\"],[0.2222222222222222,\"#7201a8\"],[0.3333333333333333,\"#9c179e\"],[0.4444444444444444,\"#bd3786\"],[0.5555555555555556,\"#d8576b\"],[0.6666666666666666,\"#ed7953\"],[0.7777777777777778,\"#fb9f3a\"],[0.8888888888888888,\"#fdca26\"],[1.0,\"#f0f921\"]],\"type\":\"surface\"}],\"table\":[{\"cells\":{\"fill\":{\"color\":\"#EBF0F8\"},\"line\":{\"color\":\"white\"}},\"header\":{\"fill\":{\"color\":\"#C8D4E3\"},\"line\":{\"color\":\"white\"}},\"type\":\"table\"}]},\"layout\":{\"annotationdefaults\":{\"arrowcolor\":\"#2a3f5f\",\"arrowhead\":0,\"arrowwidth\":1},\"autotypenumbers\":\"strict\",\"coloraxis\":{\"colorbar\":{\"outlinewidth\":0,\"ticks\":\"\"}},\"colorscale\":{\"diverging\":[[0,\"#8e0152\"],[0.1,\"#c51b7d\"],[0.2,\"#de77ae\"],[0.3,\"#f1b6da\"],[0.4,\"#fde0ef\"],[0.5,\"#f7f7f7\"],[0.6,\"#e6f5d0\"],[0.7,\"#b8e186\"],[0.8,\"#7fbc41\"],[0.9,\"#4d9221\"],[1,\"#276419\"]],\"sequential\":[[0.0,\"#0d0887\"],[0.1111111111111111,\"#46039f\"],[0.2222222222222222,\"#7201a8\"],[0.3333333333333333,\"#9c179e\"],[0.4444444444444444,\"#bd3786\"],[0.5555555555555556,\"#d8576b\"],[0.6666666666666666,\"#ed7953\"],[0.7777777777777778,\"#fb9f3a\"],[0.8888888888888888,\"#fdca26\"],[1.0,\"#f0f921\"]],\"sequentialminus\":[[0.0,\"#0d0887\"],[0.1111111111111111,\"#46039f\"],[0.2222222222222222,\"#7201a8\"],[0.3333333333333333,\"#9c179e\"],[0.4444444444444444,\"#bd3786\"],[0.5555555555555556,\"#d8576b\"],[0.6666666666666666,\"#ed7953\"],[0.7777777777777778,\"#fb9f3a\"],[0.8888888888888888,\"#fdca26\"],[1.0,\"#f0f921\"]]},\"colorway\":[\"#636efa\",\"#EF553B\",\"#00cc96\",\"#ab63fa\",\"#FFA15A\",\"#19d3f3\",\"#FF6692\",\"#B6E880\",\"#FF97FF\",\"#FECB52\"],\"font\":{\"color\":\"#2a3f5f\"},\"geo\":{\"bgcolor\":\"white\",\"lakecolor\":\"white\",\"landcolor\":\"white\",\"showlakes\":true,\"showland\":true,\"subunitcolor\":\"#C8D4E3\"},\"hoverlabel\":{\"align\":\"left\"},\"hovermode\":\"closest\",\"paper_bgcolor\":\"white\",\"plot_bgcolor\":\"white\",\"polar\":{\"angularaxis\":{\"gridcolor\":\"#EBF0F8\",\"linecolor\":\"#EBF0F8\",\"ticks\":\"\"},\"bgcolor\":\"white\",\"radialaxis\":{\"gridcolor\":\"#EBF0F8\",\"linecolor\":\"#EBF0F8\",\"ticks\":\"\"}},\"scene\":{\"xaxis\":{\"backgroundcolor\":\"white\",\"gridcolor\":\"#DFE8F3\",\"gridwidth\":2,\"linecolor\":\"#EBF0F8\",\"showbackground\":true,\"ticks\":\"\",\"zerolinecolor\":\"#EBF0F8\"},\"yaxis\":{\"backgroundcolor\":\"white\",\"gridcolor\":\"#DFE8F3\",\"gridwidth\":2,\"linecolor\":\"#EBF0F8\",\"showbackground\":true,\"ticks\":\"\",\"zerolinecolor\":\"#EBF0F8\"},\"zaxis\":{\"backgroundcolor\":\"white\",\"gridcolor\":\"#DFE8F3\",\"gridwidth\":2,\"linecolor\":\"#EBF0F8\",\"showbackground\":true,\"ticks\":\"\",\"zerolinecolor\":\"#EBF0F8\"}},\"shapedefaults\":{\"line\":{\"color\":\"#2a3f5f\"}},\"ternary\":{\"aaxis\":{\"gridcolor\":\"#DFE8F3\",\"linecolor\":\"#A2B1C6\",\"ticks\":\"\"},\"baxis\":{\"gridcolor\":\"#DFE8F3\",\"linecolor\":\"#A2B1C6\",\"ticks\":\"\"},\"bgcolor\":\"white\",\"caxis\":{\"gridcolor\":\"#DFE8F3\",\"linecolor\":\"#A2B1C6\",\"ticks\":\"\"}},\"title\":{\"x\":0.05},\"xaxis\":{\"automargin\":true,\"gridcolor\":\"#EBF0F8\",\"linecolor\":\"#EBF0F8\",\"ticks\":\"\",\"title\":{\"standoff\":15},\"zerolinecolor\":\"#EBF0F8\",\"zerolinewidth\":2},\"yaxis\":{\"automargin\":true,\"gridcolor\":\"#EBF0F8\",\"linecolor\":\"#EBF0F8\",\"ticks\":\"\",\"title\":{\"standoff\":15},\"zerolinecolor\":\"#EBF0F8\",\"zerolinewidth\":2}}},\"margin\":{\"t\":60,\"l\":40,\"r\":20,\"b\":40},\"title\":{\"text\":\"Top 10 des marques dans le parc en circulation\"},\"xaxis\":{\"title\":{\"text\":\"marque\"}},\"yaxis\":{\"title\":{\"text\":\"nb_vehicules\"}}}}",
+  "sources": [
+   "vehicules-immatricules-nc"
+  ],
+  "modele": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "calculee_le": "2026-11-16",
+  "requetes": [
+   {
+    "sql": "SELECT marque, COUNT(*) AS nb_vehicules FROM gold.fct_immatriculations WHERE statut = 'En circulation' GROUP BY marque ORDER BY nb_vehicules DESC LIMIT 10",
+    "colonnes": [
+     "marque",
+     "nb_vehicules"
+    ],
+    "lignes": [
+     [
+      "PEUGEOT",
+      46615
+     ],
+     [
+      "RENAULT",
+      42765
+     ],
+     [
+      "TOYOTA",
+      25420
+     ],
+     [
+      "FORD",
+      23940
+     ],
+     [
+      "CITROEN",
+      22683
+     ],
+     [
+      "NISSAN",
+      16340
+     ],
+     [
+      "HYUNDAI",
+      14325
+     ],
+     [
+      "KIA",
+      12663
+     ],
+     [
+      "SUZUKI",
+      11699
+     ],
+     [
+      "DACIA",
+      10976
+     ]
+    ]
+   }
+  ]
+ },
+ "Quel pourcentage des voitures particulières en circulation est hybride ou électrique, dans chaque province ?": {
+  "texte": "**Part des voitures particulières (VP) en circulation qui sont hybrides ou électriques, par province**\n\n| Province | VP en circulation | Hybrides + électriques | % hybride/électrique |\n|----------|-------------------|------------------------|----------------------|\n| Nord | 33 619 | 290 | **0,86 %** |\n| Nord et Sud | 2 379 | 11 | **0,46 %** |\n| Sud | 181 494 | 7 415 | **4,09 %** |\n| Îles Loyauté | 8 071 | 29 | **0,36 %** |\n\n**Points clés**\n- La province **Sud** concentre la grande majorité du parc VP (≈ 81 % du total) et affiche le taux le plus élevé de motorisations hybrides/électriques (≈ 4 %).\n- Les autres provinces restent sous la barre de 1 %.\n- Le total territorial (toutes provinces confondues) est d’environ **3,5 %** de VP hybrides/électriques sur l’ensemble du parc en circulation.\n\n**Limites des données**\n- Le parc « en circulation » inclut tous les véhicules dont le statut est *En circulation* (données du jeu « vehicules-immatricules-nc »).\n- Les énergies considérées comme hybrides/électriques sont celles dont la `famille_energie` vaut *Hybride*, *Hybride rechargeable* ou *Électrique* (codes EH, GH, FH, EE, EL).\n- Les véhicules dont l’énergie est « Non renseignée » ou « Inconnue » sont exclus du numérateur mais comptés au dénominateur.",
+  "sql": "WITH vp_circulation AS (SELECT i.numero_immat, c.province, e.famille_energie FROM gold.fct_immatriculations AS i JOIN gold.dim_commune AS c ON i.commune = c.commune JOIN gold.dim_energie AS e ON i.code_energie = e.code_energie WHERE i.statut = 'En circulation' AND i.code_genre = 'VP') SELECT province, COUNT(*) AS total_vp, SUM(CASE WHEN famille_energie IN ('Hybride', 'Hybride rechargeable', 'Électrique') THEN 1 ELSE 0 END) AS hybride_electrique, ROUND(100.0 * SUM(CASE WHEN famille_energie IN ('Hybride', 'Hybride rechargeable', 'Électrique') THEN 1 ELSE 0 END) / COUNT(*), 2) AS pct_hybride_electrique FROM vp_circulation GROUP BY province ORDER BY province LIMIT 1000",
+  "colonnes": [
+   "province",
+   "total_vp",
+   "hybride_electrique",
+   "pct_hybride_electrique"
+  ],
+  "lignes": [
+   [
+    "Nord",
+    33619,
+    290,
+    "0.8600000000000000"
+   ],
+   [
+    "Nord et Sud",
+    2379,
+    11,
+    "0.4600000000000000"
+   ],
+   [
+    "Sud",
+    181494,
+    7415,
+    "4.0900000000000000"
+   ],
+   [
+    "Îles Loyauté",
+    8071,
+    29,
+    "0.3600000000000000"
+   ]
+  ],
+  "figure": null,
+  "sources": [
+   "vehicules-immatricules-nc"
+  ],
+  "modele": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "calculee_le": "2026-11-16",
+  "requetes": [
+   {
+    "sql": "SELECT code_energie, libelle_energie, famille_energie FROM gold.dim_energie LIMIT 1000",
+    "colonnes": [
+     "code_energie",
+     "libelle_energie",
+     "famille_energie"
+    ],
+    "lignes": [
+     [
+      "ES",
+      "Essence",
+      "Thermique"
+     ],
+     [
+      "EG",
+      "Bicarburation essence-GPL",
+      "Thermique"
+     ],
+     [
+      "EH",
+      "Hybride essence non rechargeable",
+      "Hybride"
+     ],
+     [
+      "GH",
+      "Hybride gazole non rechargeable",
+      "Hybride"
+     ],
+     [
+      "FH",
+      "Hybride superéthanol non rechargeable",
+      "Hybride"
+     ],
+     [
+      "GO",
+      "Gazole",
+      "Thermique"
+     ],
+     [
+      "FE",
+      "Superéthanol E85",
+      "Thermique"
+     ],
+     [
+      "EE",
+      "Hybride essence rechargeable",
+      "Hybride rechargeable"
+     ],
+     [
+      "EL",
+      "Électricité",
+      "Électrique"
+     ],
+     [
+      "/",
+      "Non renseignée",
+      "Non renseignée"
+     ],
+     [
+      "GE",
+      "Code GE non documenté",
+      "Inconnue"
+     ],
+     [
+      "HE",
+      "Code HE non documenté",
+      "Inconnue"
+     ]
+    ]
+   },
+   {
+    "sql": "SELECT code_genre, libelle_genre FROM gold.dim_genre LIMIT 1000",
+    "colonnes": [
+     "code_genre",
+     "libelle_genre"
+    ],
+    "lignes": [
+     [
+      "TRR",
+      "TRACTEUR ROUTIER"
+     ],
+     [
+      "CTTE",
+      "CAMIONNETTE"
+     ],
+     [
+      "CAM",
+      "CAMION"
+     ],
+     [
+      "TCP",
+      "TRANSPORT EN COMMUN DE PERSONNES"
+     ],
+     [
+      "REM",
+      "REMORQUE ROUTIERE"
+     ],
+     [
+      "MTL",
+      "MOTOCYCLETTE LEGERE"
+     ],
+     [
+      "QMLO",
+      "QUADRICYLCES A MOTEUR LOURD"
+     ],
+     [
+      "RESP",
+      "REMORQUE SPECIALISE"
+     ],
+     [
+      "TM",
+      "TRICYLES A MOTEUR"
+     ],
+     [
+      "MAGA",
+      "MACHINE AGRICOLE AUTOMOTRICE"
+     ],
+     [
+      "VP",
+      "VOITURE PARTICULIERE"
+     ],
+     [
+      "QMLG",
+      "QUADRICYLCES A MOTEUR LEGER"
+     ],
+     [
+      "SREM",
+      "SEMI-REMORQUE ROUTIERE"
+     ],
+     [
+      "SRTC",
+      "SEMI-REMORQUE POUR TRANSPORTS COMBINES"
+     ],
+     [
+      "SRSP",
+      "SEMI-REMORQUE SPECIALISEE"
+     ],
+     [
+      "TRA",
+      "TRACTEUR AGRICOLE"
+     ],
+     [
+      "REA",
+      "REMORQUE AGRICOLE"
+     ],
+     [
+      "MOTO",
+      "MOTOCYCLETTE"
+     ],
+     [
+      "MIAR",
+      "MACHINE ET INSTRUMENT AGRICOLE REMO"
+     ],
+     [
+      "CYCL",
+      "CYCLOMOTEUR"
+     ],
+     [
+      "SREA",
+      "SEMI-REMORQUE AGRICOLE"
+     ],
+     [
+      "VASP",
+      "VEHICULE AUTOMOTEUR SPECIALISE"
+     ]
+    ]
+   },
+   {
+    "sql": "WITH vp_circulation AS (SELECT i.numero_immat, c.province, e.famille_energie FROM gold.fct_immatriculations AS i JOIN gold.dim_commune AS c ON i.commune = c.commune JOIN gold.dim_energie AS e ON i.code_energie = e.code_energie WHERE i.statut = 'En circulation' AND i.code_genre = 'VP') SELECT province, COUNT(*) AS total_vp, SUM(CASE WHEN famille_energie IN ('Hybride', 'Hybride rechargeable', 'Électrique') THEN 1 ELSE 0 END) AS hybride_electrique, ROUND(100.0 * SUM(CASE WHEN famille_energie IN ('Hybride', 'Hybride rechargeable', 'Électrique') THEN 1 ELSE 0 END) / COUNT(*), 2) AS pct_hybride_electrique FROM vp_circulation GROUP BY province ORDER BY province LIMIT 1000",
+    "colonnes": [
+     "province",
+     "total_vp",
+     "hybride_electrique",
+     "pct_hybride_electrique"
+    ],
+    "lignes": [
+     [
+      "Nord",
+      33619,
+      290,
+      "0.8600000000000000"
+     ],
+     [
+      "Nord et Sud",
+      2379,
+      11,
+      "0.4600000000000000"
+     ],
+     [
+      "Sud",
+      181494,
+      7415,
+      "4.0900000000000000"
+     ],
+     [
+      "Îles Loyauté",
+      8071,
+      29,
+      "0.3600000000000000"
+     ]
+    ]
+   }
+  ]
+ }
+}

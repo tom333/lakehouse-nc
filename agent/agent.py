@@ -21,6 +21,7 @@ from agent.modeles import Modele, candidats
 logger = logging.getLogger(__name__)
 
 TOURS_MAX = 5
+TEXTE_ECHEC = "Je n'ai pas réussi à aboutir à une réponse fiable en quelques essais."
 LIGNES_POUR_LE_MODELE = 30
 
 # Jeu data.gouv.nc à l'origine de chaque table de faits.
@@ -89,6 +90,9 @@ class Reponse:
     figure: str | None = None  # Figure Plotly sérialisée en JSON
     sources: list[str] = field(default_factory=list)
     modele: str | None = None
+    calculee_le: str | None = None  # renseigné pour les questions épinglées
+    # Toutes les requêtes exécutées pendant la conversation (sql, colonnes, lignes)
+    requetes: list[dict] = field(default_factory=list)
 
     def en_dict(self) -> dict:
         return asdict(self)
@@ -122,6 +126,9 @@ def _appel_outil(arguments: str, reponse: Reponse) -> str:
     reponse.colonnes = resultat.colonnes
     reponse.lignes = [list(ligne) for ligne in resultat.lignes]
     reponse.sources = sources_de(resultat.sql)
+    reponse.requetes.append(
+        {"sql": resultat.sql, "colonnes": resultat.colonnes, "lignes": reponse.lignes}
+    )
     reponse.figure = None
     message = {
         "colonnes": resultat.colonnes,
@@ -160,15 +167,13 @@ def _converser(modele: Modele, question: str) -> Reponse:
                     "content": _appel_outil(appel.function.arguments, reponse),
                 }
             )
-    reponse.texte = (
-        "Je n'ai pas réussi à aboutir à une réponse fiable en quelques essais."
-    )
+    reponse.texte = TEXTE_ECHEC
     return reponse
 
 
-def repondre(question: str) -> Reponse:
-    """Essaie chaque modèle candidat ; passe au suivant si l'API échoue."""
-    for modele in candidats():
+def repondre(question: str, modeles: list[Modele] | None = None) -> Reponse:
+    """Essaie chaque modèle (par défaut les candidats) ; passe au suivant si l'API échoue."""
+    for modele in candidats() if modeles is None else modeles:
         try:
             return _converser(modele, question)
         except APIError as e:

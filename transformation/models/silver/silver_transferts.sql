@@ -11,7 +11,7 @@ select
     s.timestamp_transaction as horodatage_transaction,
     s.date_transaction,
     s.numero_immat,
-    s.teleservice as par_teleservice,
+    s.teleservice = 'true' as par_teleservice,
     coalesce(nullif(s.type_societe_proprietaire_1, ''), 'Particulier') as type_nouveau_proprietaire,
     nullif(s.type_societe_locataire_1, '') is not null as en_location,
     upper(trim(s.marque)) as marque,

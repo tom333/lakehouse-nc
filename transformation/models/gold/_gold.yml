@@ -61,8 +61,10 @@ models:
 
   - name: fct_immatriculations
     description: >
-      Parc de véhicules immatriculés en Nouvelle-Calédonie, un véhicule par
-      ligne. Source : jeu « vehicules-immatricules-nc » de data.gouv.nc.
+      Véhicules immatriculés en Nouvelle-Calédonie, un véhicule par ligne,
+      y compris ceux qui ne roulent plus (détruits, exportés, retirés, volés).
+      Pour le parc en circulation, filtrer statut = 'En circulation'.
+      Source : jeu « vehicules-immatricules-nc » de data.gouv.nc.
     columns:
       - name: numero_immat
         description: Numéro d'immatriculation (clé).
