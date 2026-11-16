@@ -71,6 +71,8 @@ Règles :
   N'invente jamais un chiffre : chaque nombre de ta réponse vient d'un résultat de requête.
 - N'utilise que les tables et colonnes décrites ci-dessous (schéma gold).
 - Si la requête échoue, lis l'erreur, corrige la requête et réessaie.
+- Pour une moyenne ou un pourcentage arrondi, écris round(avg(x), 1) : un CAST en
+  DECIMAL sans échelle arrondit à l'entier.
 - Si la question sort de ces données, dis-le simplement, sans requête.
 - Demande un graphique quand il aide à lire le résultat (évolution, comparaison).
 - Réponse finale courte : la réponse, les chiffres clés, et les limites éventuelles des

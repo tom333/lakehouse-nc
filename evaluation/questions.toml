@@ -129,12 +129,12 @@ sql = "SELECT count(*) FROM fct_immatriculations WHERE statut = 'En circulation'
 
 [[question]]
 id = "q26"
-question = "Quels sont les 5 genres de véhicules les plus nombreux en circulation, avec leur nombre ?"
-sql = "SELECT code_genre, count(*) n FROM fct_immatriculations WHERE statut = 'En circulation' GROUP BY 1 ORDER BY n DESC LIMIT 5"
+question = "Quels sont les 5 genres de véhicules les plus nombreux en circulation (libellé du genre), avec leur nombre ?"
+sql = "SELECT g.libelle_genre, count(*) n FROM fct_immatriculations f JOIN dim_genre g ON g.code_genre = f.code_genre WHERE statut = 'En circulation' GROUP BY 1 ORDER BY n DESC LIMIT 5"
 
 [[question]]
 id = "q27"
-question = "Combien de véhicules du parc ont été mis en circulation pour la première fois en Nouvelle-Calédonie avant 1950 ?"
+question = "Combien de véhicules, tous statuts confondus, ont été mis en circulation pour la première fois en Nouvelle-Calédonie avant 1950 ?"
 sql = "SELECT count(*) FROM fct_immatriculations WHERE date_premiere_circulation_nc < DATE '1950-01-01'"
 
 [[question]]
@@ -164,12 +164,12 @@ sql = "SELECT year(date_transaction) a, count(*) FROM fct_transferts GROUP BY 1"
 
 [[question]]
 id = "q33"
-question = "Quel mois de 2025 a compté le plus de ventes de véhicules d'occasion, et combien ?"
-sql = "SELECT month(date_transaction) m, count(*) n FROM fct_transferts WHERE year(date_transaction) = 2025 GROUP BY 1 ORDER BY n DESC LIMIT 1"
+question = "Quel mois de 2025 (nom du mois) a compté le plus de ventes de véhicules d'occasion, et combien ?"
+sql = "SELECT d.libelle_mois, count(*) n FROM fct_transferts t JOIN dim_date d ON d.date_jour = t.date_transaction WHERE year(date_transaction) = 2025 GROUP BY 1 ORDER BY n DESC LIMIT 1"
 
 [[question]]
 id = "q34"
-question = "Donne le nombre de ventes de véhicules d'occasion pour chaque mois de 2025."
+question = "Donne le nombre de ventes de véhicules d'occasion pour chaque mois de 2025 (numéro du mois, de 1 à 12)."
 sql = "SELECT month(date_transaction) m, count(*) FROM fct_transferts WHERE year(date_transaction) = 2025 GROUP BY 1"
 
 [[question]]
@@ -234,7 +234,7 @@ sql = "SELECT round(avg(puissance_administrative_cv), 1) FROM fct_transferts WHE
 
 [[question]]
 id = "q47"
-question = "Combien de véhicules mis en circulation avant 2010 ont été vendus d'occasion en 2025 ?"
+question = "Combien de ventes de véhicules d'occasion ont eu lieu en 2025 pour des véhicules mis en circulation avant 2010 ?"
 sql = "SELECT count(*) FROM fct_transferts WHERE year(date_transaction) = 2025 AND date_premiere_circulation < DATE '2010-01-01'"
 
 [[question]]

@@ -28,6 +28,12 @@ from agent.modeles import OPENROUTER, Modele, gratuits_avec_outils
 from agent.sql import executer
 
 DOSSIER = Path(__file__).parent
+
+
+class ModeleIndisponible(RuntimeError):
+    """Le fournisseur refuse les appels (quota, saturation) : rien n'est publié."""
+
+
 PAUSE_ENTRE_QUESTIONS = (
     4  # secondes : 20 requêtes par minute au plus sur les modèles gratuits
 )
@@ -43,6 +49,10 @@ def evaluer_modele(nom: str, questions: list[dict]) -> dict:
     modele = Modele(nom, client)
     details = []
     for q in questions:
+        if len(details) >= 2 and all(d["erreur_api"] for d in details[-2:]):
+            raise ModeleIndisponible(
+                f"{nom} : 2 questions consécutives en erreur d'API, évaluation abandonnée."
+            )
         attendues = (
             None if q.get("refus") else [list(l) for l in executer(q["sql"]).lignes]
         )
@@ -55,7 +65,7 @@ def evaluer_modele(nom: str, questions: list[dict]) -> dict:
             )
             if not erreur:
                 break
-            time.sleep(30 * (essai + 1))
+            time.sleep(10 * (essai + 1))
         duree = round(time.monotonic() - debut, 1)
         if erreur:
             correcte = False
@@ -132,8 +142,14 @@ def main() -> None:
     for nom in args.modele:
         if nom not in gratuits:
             raise SystemExit(f"{nom} n'est pas un modèle gratuit acceptant les outils.")
-        resultat = evaluer_modele(nom, questions)
-        if not args.questions:  # seul un passage complet est publié
+        try:
+            resultat = evaluer_modele(nom, questions)
+        except ModeleIndisponible as e:
+            print(f"== {e}")
+            continue
+        # Seul un passage complet, sans erreur d'API, est publié : une erreur du
+        # fournisseur ne dit rien de la qualité du modèle.
+        if not args.questions and resultat["erreurs_api"] == 0:
             fichier = DOSSIER / "resultats" / (re.sub(r"[^\w.-]", "_", nom) + ".json")
             fichier.write_text(
                 json.dumps(resultat, ensure_ascii=False, indent=1, default=str) + "\n"
