@@ -1729,6 +1729,7 @@ name = "lakehouse-nc"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "httpx" },
     { name = "openai" },
     { name = "plotly" },
     { name = "sqlglot" },
@@ -1744,7 +1745,6 @@ pipeline = [
     { name = "dagster-postgres" },
     { name = "dbt-trino" },
     { name = "dlt", extra = ["pyiceberg", "s3"] },
-    { name = "httpx" },
 ]
 
 [package.dev-dependencies]
@@ -1762,7 +1762,7 @@ requires-dist = [
     { name = "dagster-postgres", marker = "extra == 'pipeline'", specifier = "==0.29.30" },
     { name = "dbt-trino", marker = "extra == 'pipeline'", specifier = ">=1.12.0" },
     { name = "dlt", extras = ["pyiceberg", "s3"], marker = "extra == 'pipeline'", specifier = ">=1.32.0" },
-    { name = "httpx", marker = "extra == 'pipeline'", specifier = ">=0.28.1" },
+    { name = "httpx", specifier = ">=0.28.1" },
     { name = "openai", specifier = ">=3.51.0" },
     { name = "plotly", specifier = ">=7.1.0" },
     { name = "sqlglot", specifier = ">=30.31.0" },
