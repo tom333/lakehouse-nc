@@ -156,6 +156,42 @@ Critère de fin : sur `portfolio.tgu.ovh`, une question sur les véhicules renvo
 une réponse, le SQL exécuté et un graphique ; une requête d'écriture ou hors
 gold est refusée par le code, avant Trino.
 
+### Résultat de l'étape 2 (2026-11-16)
+
+- Agent dans `agent/` (installé par le portfolio depuis GitHub ; dépendances de
+  base légères, l'extra `pipeline` porte dlt, dbt et Dagster) :
+  - `sql.py` : validation sqlglot (une seule instruction, lecture seule, tables
+    `lakehouse.gold` seulement, fonctions de table interdites, `LIMIT 1000`),
+    exécution Trino sous l'utilisateur `public` ;
+  - `graphique.py` : figure Plotly construite côté serveur ;
+  - `schema.py` : schéma décrit au modèle à partir des commentaires Iceberg,
+    écrits par dbt (`persist_docs` sur gold) ;
+  - `modeles.py` : modèles gratuits d'OpenRouter acceptant les outils, lus dans
+    l'API (aucun modèle payant : la clé du compte peut payer), LocalAI en repli
+    si `LOCALAI_API_KEY` est fourni ;
+  - `cache.py`, `agent.py` : cache par question normalisée, quota quotidien.
+- 34 tests (`uv run pytest`), dont 21 cas de validation SQL.
+- Portfolio : section « Interrogez les données ouvertes de Nouvelle-Calédonie »,
+  réponse + graphique + SQL et données + jeux sources, 4 questions d'exemple,
+  10 questions par visite, 200 par jour. Ancien agent LangChain/DuckLake retiré.
+- Vérifié dans le pod du portfolio : réponse et SQL sur une question véhicules ;
+  `DROP TABLE` et lecture de bronze refusés par le code avant Trino.
+- Modèle utilisé par défaut : `nvidia/nemotron-3-ultra-550b-a55b:free`
+  (3 à 21 s par question pendant les essais).
+
+Reste à faire : repli LocalAI non branché (la clé LocalAI doit être fournie au
+portfolio) ; cache en mémoire (perdu au redémarrage du pod, qui s'endort avec
+Sablier) ; secret OpenRouter du portfolio créé à la main, hors Sealed Secrets.
+
+### Incident de sécurité traité pendant l'étape 2 (2026-11-16)
+
+RustFS tournait avec les identifiants par défaut (`rustfsadmin`), exposé sur
+Internet : son secret ne contenait pas `RUSTFS_ACCESS_KEY` / `RUSTFS_SECRET_KEY`.
+Identifiants remplacés partout (RustFS, MLflow, Dagster accidents, lakehouse-nc),
+anciens identifiants refusés, consommateurs vérifiés. Le filtre `ipAllowList`
+ajouté sur `rustfs.tgu.ovh` ne protège qu'en partie : le routeur présente une
+partie du trafic Internet sous l'adresse 192.168.88.1.
+
 ## Étape 3 — Questions épinglées et évaluation
 
 1. Quatre à six questions épinglées sur la page d'accueil, servies du cache.

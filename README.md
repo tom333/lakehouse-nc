@@ -8,7 +8,8 @@ Version légère et publique de l'architecture « datastack » : mêmes principe
 (Trino comme unique porte d'accès, autorisation par OPA, architecture Medallion,
 agent sur données gouvernées), sans catalogue OpenMetadata ni outil de BI.
 
-**État (2026-11-16) : étape 1 terminée.** Lakekeeper et Trino sont déployés en
+**État (2026-11-16) : étapes 1 et 2 terminées.** L'agent répond sur
+[portfolio.tgu.ovh](https://portfolio.tgu.ovh). Lakekeeper et Trino sont déployés en
 GitOps sur le cluster ; Trino lit et écrit des tables Iceberg stockées sur RustFS
 (`scripts/test-fumee-trino.sh`). Deux jeux de data.gouv.nc (véhicules immatriculés, transferts de véhicules
 d'occasion : 577 643 lignes) sont chargés en bronze par dlt, en incrémental, puis
