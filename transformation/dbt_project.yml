@@ -15,6 +15,10 @@ models:
     gold:
       +schema: gold
       +materialized: table
+      # Descriptions écrites en commentaires Iceberg : l'agent les lit dans Trino.
+      +persist_docs:
+        relation: true
+        columns: true
 
 seeds:
   lakehouse_nc:

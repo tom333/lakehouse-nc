@@ -12,7 +12,7 @@ ENV UV_COMPILE_BYTECODE=1 \
 
 WORKDIR /app
 COPY pyproject.toml uv.lock ./
-RUN uv sync --frozen --no-dev --no-install-project
+RUN uv sync --frozen --no-dev --no-install-project --extra pipeline
 
 COPY ingestion ingestion
 COPY orchestration orchestration
