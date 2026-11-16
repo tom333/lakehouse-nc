@@ -6,8 +6,8 @@ Consignes pour un agent de code qui reprend ce projet.
 
 Projet initié le 2026-11-16. Dépôt public `github.com/tom333/lakehouse-nc`.
 Étapes 1.1 (stockage), 1.2 (Lakekeeper + Trino déployés par ArgoCD, chart
-`deploy/`) 1.3 (ingestion dlt en bronze) et 1.4 (dbt silver et gold) terminées, lancées
-en local. Prochaine décision : planification sur le cluster (Dagster). Voir `docs/plan.md` pour le détail et la suite.
+`deploy/`) 1.3 (ingestion dlt en bronze) et 1.4 (dbt silver et gold) terminées, planifiées
+chaque jour par Dagster (`orchestration/`). Prochaine étape : 2 (agent). Voir `docs/plan.md` pour le détail et la suite.
 
 ## À lire avant d'agir
 

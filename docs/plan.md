@@ -118,9 +118,27 @@ En local : `kubectl -n lakehouse-nc port-forward svc/trino 8080:8080`, puis
 Critères de fin de l'étape 1 tenus : `select` sur gold depuis Trino, `dbt build`
 vert, seconde ingestion limitée au nouveau.
 
-Reste à faire avant l'étape 2 : planifier ingestion puis `dbt build` sur le
-cluster (Dagster, D9). L'application Dagster de `my-kluster` est désactivée et
-partagée avec d'autres projets : décision à prendre avec Thomas.
+### Planification (2026-11-16)
+
+Dagster partagé réactivé à la demande de Thomas (`my-kluster`, chart 1.13.30),
+avec un emplacement de code `lakehouse-nc` :
+
+- `orchestration/definitions.py` : assets dlt `bronze/<table>` puis modèles dbt
+  (clés `silver/...`, `gold/...`), job `quotidien`, planifié chaque jour à 6 h
+  heure de Nouméa et actif dès le déploiement (`DefaultScheduleStatus.RUNNING`).
+- Image `localhost:32000/lakehouse-nc-dagster:latest` (`Dockerfile`), serveur de
+  code dans le namespace `dagster` (`deploy/dagster/`, application ArgoCD
+  `lakehouse-nc-dagster`). Mise à jour : `scripts/publier-code-dagster.sh`.
+- Les runs reçoivent le secret `lakehouse-nc-dagster` et `TRINO_HOST` par le
+  contexte de conteneur (`DAGSTER_CONTAINER_CONTEXT`).
+- Premier run complet réussi dans le cluster (ingestion puis `dbt build`).
+- Pièges rencontrés : l'image doit contenir `dagster-postgres` (le run écrit dans
+  la base de Dagster) et `/opt/dagster/dagster_home` doit être inscriptible par
+  l'utilisateur 1000.
+- À surveiller : le run launcher applique à tous les runs les variables propres
+  à accidents (`dagster-ducklake-config`, `rustfs-credentials-dagster`), dont
+  `AWS_ENDPOINT_URL`. Sans effet aujourd'hui (dlt et pyiceberg reçoivent une
+  adresse explicite) ; à déplacer dans le contexte d'accidents.
 
 ## Étape 2 — Agent dans le portfolio
 

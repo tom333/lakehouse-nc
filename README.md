@@ -13,7 +13,7 @@ GitOps sur le cluster ; Trino lit et écrit des tables Iceberg stockées sur Rus
 (`scripts/test-fumee-trino.sh`). Deux jeux de data.gouv.nc (véhicules immatriculés, transferts de véhicules
 d'occasion : 577 643 lignes) sont chargés en bronze par dlt, en incrémental, puis
 modélisés par dbt en silver et en gold (modèle en étoile : 8 modèles, 31 tests).
-Étape 1 terminée, hors planification (à venir).
+Le tout tourne chaque jour à 6 h (heure de Nouméa), orchestré par Dagster.
 
 ## Par où commencer
 

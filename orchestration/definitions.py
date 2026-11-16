@@ -11,6 +11,7 @@ from dagster import (
     AssetKey,
     AssetSelection,
     AssetSpec,
+    DefaultScheduleStatus,
     Definitions,
     ScheduleDefinition,
     define_asset_job,
@@ -65,6 +66,7 @@ defs = Definitions(
             job=quotidien,
             cron_schedule="0 6 * * *",
             execution_timezone="Pacific/Noumea",
+            default_status=DefaultScheduleStatus.RUNNING,
         )
     ],
     resources={
