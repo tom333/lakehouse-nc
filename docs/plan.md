@@ -194,6 +194,42 @@ partie du trafic Internet sous l'adresse 192.168.88.1.
 
 ## Étape 3 — Questions épinglées et évaluation
 
+### Résultat de l'étape 3 (2026-11-16)
+
+- **Questions épinglées** (`agent/epinglees.py`, `agent/epinglees.json`) : 4
+  questions dont la réponse est calculée à l'avance et livrée avec l'agent, servie
+  sans appel au modèle même après un redémarrage du portfolio. Une réponse n'est
+  épinglée que si une des requêtes de l'agent renvoie le résultat d'un SQL de
+  référence. Ce contrôle a révélé que le modèle comptait tout le parc (1 296
+  véhicules électriques) au lieu du parc en circulation (1 264) : la description
+  dbt de `fct_immatriculations` précise désormais le filtre à appliquer.
+- **Évaluation** (`evaluation/`) : 52 questions de référence, dont 4 à refuser
+  (hors sujet ou demande de suppression). Le résultat attendu est celui d'un SQL
+  exécuté au moment de l'évaluation, les données changeant chaque jour. Commande :
+  `uv run python -m evaluation.evaluer --modele <modèle> [...]`.
+
+| Modèle (gratuit, OpenRouter) | Score | Durée médiane |
+|---|---|---|
+| `nvidia/nemotron-3-ultra-550b-a55b` | 98,1 % (51/52) | 10,4 s |
+| `cohere/north-mini-code` | 90,4 % (47/52) | 3,1 s |
+| `baidu/ernie-5.5-flash-preview` | 86,5 % (45/52) | 4,2 s |
+
+- Notation stricte : une réponse qui contient la bonne valeur au milieu de lignes
+  en plus est comptée fausse (seul échec de nemotron, 4 des 7 échecs d'ernie). Les
+  vraies erreurs : commune écrite « Nouméa » au lieu de « NOUMEA » (cohere), pas de
+  requête ou réponse à une autre question (ernie).
+- Les modèles Google (`gemma-4`) et `inclusionai/ling-3.2-flash` n'ont pas pu être
+  évalués : le fournisseur refusait les appels (429). Un passage avec des erreurs
+  d'API n'est pas publié.
+- Défauts corrigés en route : `par_teleservice` était du texte et devient un
+  booléen ; consigne d'arrondi ajoutée (un `CAST` en `DECIMAL` sans échelle
+  arrondit à l'entier) ; quatre questions ambiguës reformulées avant le passage
+  publié.
+
+Critère de fin tenu : la commande d'évaluation tourne de bout en bout et son
+résultat est dans le dépôt (`evaluation/RESULTATS.md`, `evaluation/resultats/`).
+
+
 1. Quatre à six questions épinglées sur la page d'accueil, servies du cache.
 2. Jeu de 50 à 100 questions de référence et commande d'évaluation.
 3. Score publié dans le dépôt, pour au moins deux modèles.

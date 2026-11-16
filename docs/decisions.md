@@ -20,6 +20,7 @@
 | D14 | Gold en **modèle en étoile** (`fct_immatriculations`, `fct_transferts`, dimensions date, commune, énergie, genre) | Assistant, 2026-11-16 | Comble le manque « modélisation dimensionnelle » du CV ; colonnes décrites en français pour l'agent |
 | D15 | **L'agent vit dans ce dépôt** (`agent/`) et le portfolio l'installe depuis GitHub | Assistant, 2026-11-16 | Le même code sert la démo et l'évaluation (étape 3) ; le portfolio ne garde que l'interface |
 | D16 | **Documentation dbt écrite dans Iceberg** (`persist_docs`), lue par l'agent dans Trino | Assistant, 2026-11-16 | Une seule source pour la description du schéma, sans copie dans l'agent |
+| D17 | **Évaluation par résultat attendu**, calculé par un SQL de référence au moment de l'évaluation ; notation stricte, sans LLM-juge | Assistant, 2026-11-16 | Reproductible et gratuit ; les données changent chaque jour, des valeurs figées vieilliraient |
 
 ## Options écartées
 

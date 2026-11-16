@@ -7,13 +7,13 @@ Consignes pour un agent de code qui reprend ce projet.
 Projet initié le 2026-11-16. Dépôt public `github.com/tom333/lakehouse-nc`.
 Étapes 1.1 (stockage), 1.2 (Lakekeeper + Trino déployés par ArgoCD, chart
 `deploy/`) 1.3 (ingestion dlt en bronze) et 1.4 (dbt silver et gold) terminées, planifiées
-chaque jour par Dagster (`orchestration/`). Étape 2 terminée : agent (`agent/`) en ligne sur portfolio.tgu.ovh. Prochaine
-étape : 3 (questions épinglées, évaluation). Voir `docs/plan.md` pour le détail et la suite.
+chaque jour par Dagster (`orchestration/`). Étapes 2 (agent en ligne sur portfolio.tgu.ovh) et 3 (questions épinglées,
+évaluation : `evaluation/RESULTATS.md`) terminées. Prochaine étape : 4 (OPA). Voir `docs/plan.md` pour le détail et la suite.
 
 ## À lire avant d'agir
 
 1. `docs/cadrage.md` — pourquoi le projet existe et ce qu'il doit prouver.
-2. `docs/decisions.md` — décisions prises (D1 à D16) et questions ouvertes (Q1, Q2, Q6).
+2. `docs/decisions.md` — décisions prises (D1 à D17) et questions ouvertes (Q1, Q2, Q6).
 3. `docs/plan.md` — étapes et critères de fin.
 4. `docs/architecture.md` et `docs/environnement.md` — cible technique et existant.
 5. `/data/projets/perso/my-kluster/CLAUDE.md` — avant de toucher au cluster.

@@ -1,0 +1,2282 @@
+{
+ "modele": "baidu/ernie-5.5-flash-preview:free",
+ "date": "2026-11-16",
+ "questions": 52,
+ "correctes": 45,
+ "score": 86.5,
+ "duree_mediane_s": 4.2,
+ "erreurs_api": 0,
+ "details": [
+  {
+   "id": "q01",
+   "question": "Combien de véhicules compte le parc immatriculé au total, tous statuts confondus ?",
+   "correcte": true,
+   "duree_s": 5.4,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT COUNT(*) AS total_vehicules FROM gold.fct_immatriculations LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     472159
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM fct_immatriculations",
+   "lignes_attendues": [
+    [
+     472159
+    ]
+   ]
+  },
+  {
+   "id": "q02",
+   "question": "Combien de véhicules sont en circulation ?",
+   "correcte": true,
+   "duree_s": 3.3,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT COUNT(*) AS nb_vehicules_en_circulation FROM gold.fct_immatriculations WHERE statut = 'En circulation' LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     366896
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM fct_immatriculations WHERE statut = 'En circulation'",
+   "lignes_attendues": [
+    [
+     366896
+    ]
+   ]
+  },
+  {
+   "id": "q03",
+   "question": "Combien de véhicules ont été détruits ?",
+   "correcte": true,
+   "duree_s": 5.0,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT COUNT(*) AS nb_vehicules_detruits FROM gold.fct_immatriculations WHERE statut = 'Détruit' LIMIT 1000",
+    "SELECT statut, COUNT(*) AS nb FROM gold.fct_immatriculations GROUP BY statut ORDER BY nb DESC LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     "En circulation",
+     366896
+    ],
+    [
+     "Retiré",
+     91743
+    ],
+    [
+     "Exporté",
+     5476
+    ],
+    [
+     "Volé",
+     4144
+    ],
+    [
+     "Détruit",
+     3900
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM fct_immatriculations WHERE statut = 'Détruit'",
+   "lignes_attendues": [
+    [
+     3900
+    ]
+   ]
+  },
+  {
+   "id": "q04",
+   "question": "Combien de véhicules sont déclarés volés et non retrouvés ?",
+   "correcte": true,
+   "duree_s": 5.2,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT COUNT(*) AS nb_vehicules_voles FROM gold.fct_immatriculations WHERE statut = 'Volé' LIMIT 1000",
+    "SELECT statut, COUNT(*) AS nb FROM gold.fct_immatriculations GROUP BY statut ORDER BY nb DESC LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     "En circulation",
+     366896
+    ],
+    [
+     "Retiré",
+     91743
+    ],
+    [
+     "Exporté",
+     5476
+    ],
+    [
+     "Volé",
+     4144
+    ],
+    [
+     "Détruit",
+     3900
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM fct_immatriculations WHERE statut = 'Volé'",
+   "lignes_attendues": [
+    [
+     4144
+    ]
+   ]
+  },
+  {
+   "id": "q05",
+   "question": "Combien de véhicules ont été exportés ?",
+   "correcte": false,
+   "duree_s": 1.6,
+   "erreur_api": null,
+   "sql_executes": [],
+   "lignes_agent": [],
+   "sql_attendu": "SELECT count(*) FROM fct_immatriculations WHERE statut = 'Exporté'",
+   "lignes_attendues": [
+    [
+     5476
+    ]
+   ]
+  },
+  {
+   "id": "q06",
+   "question": "Donne le nombre de véhicules par statut.",
+   "correcte": true,
+   "duree_s": 2.9,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT statut, COUNT(*) AS nb_vehicules FROM gold.fct_immatriculations GROUP BY statut ORDER BY nb_vehicules DESC LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     "En circulation",
+     366896
+    ],
+    [
+     "Retiré",
+     91743
+    ],
+    [
+     "Exporté",
+     5476
+    ],
+    [
+     "Volé",
+     4144
+    ],
+    [
+     "Détruit",
+     3900
+    ]
+   ],
+   "sql_attendu": "SELECT statut, count(*) FROM fct_immatriculations GROUP BY statut",
+   "lignes_attendues": [
+    [
+     "En circulation",
+     366896
+    ],
+    [
+     "Volé",
+     4144
+    ],
+    [
+     "Retiré",
+     91743
+    ],
+    [
+     "Exporté",
+     5476
+    ],
+    [
+     "Détruit",
+     3900
+    ]
+   ]
+  },
+  {
+   "id": "q07",
+   "question": "Combien de voitures particulières sont en circulation ?",
+   "correcte": true,
+   "duree_s": 5.5,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT code_genre, libelle_genre FROM gold.dim_genre ORDER BY code_genre LIMIT 1000",
+    "SELECT COUNT(*) AS nb_vp_en_circulation FROM gold.fct_immatriculations AS i JOIN gold.dim_genre AS g ON g.code_genre = i.code_genre WHERE g.libelle_genre = 'VOITURE PARTICULIERE' AND i.statut = 'En circulation' LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     225590
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM fct_immatriculations WHERE statut = 'En circulation' AND code_genre = 'VP'",
+   "lignes_attendues": [
+    [
+     225590
+    ]
+   ]
+  },
+  {
+   "id": "q08",
+   "question": "Combien de véhicules électriques sont en circulation ?",
+   "correcte": true,
+   "duree_s": 8.0,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT e.code_energie, e.libelle_energie, e.famille_energie, COUNT(*) AS nb FROM gold.fct_immatriculations AS i JOIN gold.dim_energie AS e ON e.code_energie = i.code_energie WHERE i.statut = 'En circulation' GROUP BY e.code_energie, e.libelle_energie, e.famille_energie ORDER BY nb DESC LIMIT 1000",
+    "SELECT COUNT(*) AS nb_electriques, ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 2) AS part_parc_pct FROM gold.fct_immatriculations WHERE statut = 'En circulation' AND code_energie = 'EL' LIMIT 1000",
+    "SELECT COUNT(*) AS parc_total, COUNT_IF(code_energie = 'EL') AS nb_electriques, ROUND(100.0 * COUNT_IF(code_energie = 'EL') / COUNT(*), 2) AS part_electrique_pct FROM gold.fct_immatriculations WHERE statut = 'En circulation' LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     366896,
+     1264,
+     "0.3400000000000000"
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM fct_immatriculations f JOIN dim_energie e ON e.code_energie = f.code_energie WHERE statut = 'En circulation' AND e.famille_energie = 'Électrique'",
+   "lignes_attendues": [
+    [
+     1264
+    ]
+   ]
+  },
+  {
+   "id": "q09",
+   "question": "Combien de véhicules hybrides rechargeables sont en circulation ?",
+   "correcte": true,
+   "duree_s": 6.1,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT code_energie, libelle_energie, famille_energie FROM gold.dim_energie ORDER BY libelle_energie LIMIT 1000",
+    "SELECT e.libelle_energie, COUNT(*) AS nb FROM gold.fct_immatriculations AS i JOIN gold.dim_energie AS e ON e.code_energie = i.code_energie WHERE i.statut = 'En circulation' AND e.famille_energie = 'Hybride rechargeable' GROUP BY e.libelle_energie ORDER BY nb DESC LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     "Hybride essence rechargeable",
+     168
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM fct_immatriculations f JOIN dim_energie e ON e.code_energie = f.code_energie WHERE statut = 'En circulation' AND e.famille_energie = 'Hybride rechargeable'",
+   "lignes_attendues": [
+    [
+     168
+    ]
+   ]
+  },
+  {
+   "id": "q10",
+   "question": "Combien de véhicules en circulation compte chaque famille d'énergie ?",
+   "correcte": true,
+   "duree_s": 2.7,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT e.famille_energie, COUNT(*) AS nb_vehicules FROM gold.fct_immatriculations AS i JOIN gold.dim_energie AS e ON e.code_energie = i.code_energie WHERE i.statut = 'En circulation' GROUP BY e.famille_energie ORDER BY nb_vehicules DESC LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     "Thermique",
+     338684
+    ],
+    [
+     "Non renseignée",
+     19788
+    ],
+    [
+     "Hybride",
+     6989
+    ],
+    [
+     "Électrique",
+     1264
+    ],
+    [
+     "Hybride rechargeable",
+     168
+    ],
+    [
+     "Inconnue",
+     3
+    ]
+   ],
+   "sql_attendu": "SELECT e.famille_energie, count(*) FROM fct_immatriculations f JOIN dim_energie e ON e.code_energie = f.code_energie WHERE statut = 'En circulation' GROUP BY 1",
+   "lignes_attendues": [
+    [
+     "Non renseignée",
+     19788
+    ],
+    [
+     "Inconnue",
+     3
+    ],
+    [
+     "Thermique",
+     338684
+    ],
+    [
+     "Hybride",
+     6989
+    ],
+    [
+     "Électrique",
+     1264
+    ],
+    [
+     "Hybride rechargeable",
+     168
+    ]
+   ]
+  },
+  {
+   "id": "q11",
+   "question": "Quelles sont les 5 marques les plus nombreuses parmi les véhicules en circulation, avec leur nombre ?",
+   "correcte": true,
+   "duree_s": 3.4,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT marque, COUNT(*) AS nb_vehicules FROM gold.fct_immatriculations WHERE statut = 'En circulation' GROUP BY marque ORDER BY nb_vehicules DESC LIMIT 5"
+   ],
+   "lignes_agent": [
+    [
+     "PEUGEOT",
+     46615
+    ],
+    [
+     "RENAULT",
+     42765
+    ],
+    [
+     "TOYOTA",
+     25420
+    ],
+    [
+     "FORD",
+     23940
+    ],
+    [
+     "CITROEN",
+     22683
+    ]
+   ],
+   "sql_attendu": "SELECT marque, count(*) n FROM fct_immatriculations WHERE statut = 'En circulation' GROUP BY 1 ORDER BY n DESC LIMIT 5",
+   "lignes_attendues": [
+    [
+     "PEUGEOT",
+     46615
+    ],
+    [
+     "RENAULT",
+     42765
+    ],
+    [
+     "TOYOTA",
+     25420
+    ],
+    [
+     "FORD",
+     23940
+    ],
+    [
+     "CITROEN",
+     22683
+    ]
+   ]
+  },
+  {
+   "id": "q12",
+   "question": "Quelle est la marque la plus fréquente parmi les véhicules électriques en circulation, et combien en compte-t-elle ?",
+   "correcte": false,
+   "duree_s": 8.3,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT libelle_energie, famille_energie, COUNT(*) AS nb FROM gold.fct_immatriculations AS i JOIN gold.dim_energie AS e USING (code_energie) WHERE i.statut = 'En circulation' GROUP BY libelle_energie, famille_energie ORDER BY nb DESC LIMIT 1000",
+    "SELECT i.marque, COUNT(*) AS nb FROM gold.fct_immatriculations AS i JOIN gold.dim_energie AS e USING (code_energie) WHERE i.statut = 'En circulation' AND e.famille_energie = 'Électrique' GROUP BY i.marque ORDER BY nb DESC LIMIT 10",
+    "SELECT COUNT(*) AS total_electriques, ROUND(100.0 * SUM(CASE WHEN i.marque = 'BYD' THEN 1 ELSE 0 END) / COUNT(*), 1) AS part_byd_pct FROM gold.fct_immatriculations AS i JOIN gold.dim_energie AS e USING (code_energie) WHERE i.statut = 'En circulation' AND e.famille_energie = 'Électrique' LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     1264,
+     "29.4000000000000000"
+    ]
+   ],
+   "sql_attendu": "SELECT marque, count(*) n FROM fct_immatriculations f JOIN dim_energie e ON e.code_energie = f.code_energie WHERE statut = 'En circulation' AND e.famille_energie = 'Électrique' GROUP BY 1 ORDER BY n DESC LIMIT 1",
+   "lignes_attendues": [
+    [
+     "BYD",
+     371
+    ]
+   ]
+  },
+  {
+   "id": "q13",
+   "question": "Combien de véhicules en circulation compte chaque province ?",
+   "correcte": true,
+   "duree_s": 3.7,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT c.province, COUNT(*) AS nb_vehicules FROM gold.fct_immatriculations AS i JOIN gold.dim_commune AS c ON i.commune = c.commune WHERE i.statut = 'En circulation' GROUP BY c.province ORDER BY nb_vehicules DESC LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     "Sud",
+     292158
+    ],
+    [
+     "Nord",
+     56476
+    ],
+    [
+     "Îles Loyauté",
+     13822
+    ],
+    [
+     "Nord et Sud",
+     4397
+    ]
+   ],
+   "sql_attendu": "SELECT c.province, count(*) FROM fct_immatriculations f JOIN dim_commune c ON c.commune = f.commune WHERE statut = 'En circulation' GROUP BY 1",
+   "lignes_attendues": [
+    [
+     "Îles Loyauté",
+     13822
+    ],
+    [
+     "Nord",
+     56476
+    ],
+    [
+     "Sud",
+     292158
+    ],
+    [
+     "Nord et Sud",
+     4397
+    ]
+   ]
+  },
+  {
+   "id": "q14",
+   "question": "Quelles sont les 3 communes qui comptent le plus de véhicules en circulation, avec leur nombre ?",
+   "correcte": true,
+   "duree_s": 2.8,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT commune, COUNT(*) AS nb_vehicules FROM gold.fct_immatriculations WHERE statut = 'En circulation' GROUP BY commune ORDER BY nb_vehicules DESC LIMIT 3"
+   ],
+   "lignes_agent": [
+    [
+     "NOUMEA",
+     164450
+    ],
+    [
+     "MONT-DORE",
+     36696
+    ],
+    [
+     "DUMBEA",
+     32503
+    ]
+   ],
+   "sql_attendu": "SELECT commune, count(*) n FROM fct_immatriculations WHERE statut = 'En circulation' AND commune IS NOT NULL GROUP BY 1 ORDER BY n DESC LIMIT 3",
+   "lignes_attendues": [
+    [
+     "NOUMEA",
+     164450
+    ],
+    [
+     "MONT-DORE",
+     36696
+    ],
+    [
+     "DUMBEA",
+     32503
+    ]
+   ]
+  },
+  {
+   "id": "q15",
+   "question": "Combien de véhicules en circulation ont un propriétaire domicilié à Nouméa ?",
+   "correcte": false,
+   "duree_s": 7.4,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT commune, COUNT(*) AS nb_vehicules FROM gold.fct_immatriculations WHERE statut = 'En circulation' GROUP BY commune ORDER BY nb_vehicules DESC LIMIT 15",
+    "SELECT COUNT(*) AS total_circulation FROM gold.fct_immatriculations WHERE statut = 'En circulation' LIMIT 1000",
+    "SELECT ROUND(100.0 * COUNT_IF(commune = 'NOUMEA') / COUNT(*), 1) AS part_noumea_pct FROM gold.fct_immatriculations WHERE statut = 'En circulation' LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     "44.8000000000000000"
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM fct_immatriculations WHERE statut = 'En circulation' AND commune = 'NOUMEA'",
+   "lignes_attendues": [
+    [
+     164450
+    ]
+   ]
+  },
+  {
+   "id": "q16",
+   "question": "Combien de véhicules en circulation compte la province des Îles Loyauté ?",
+   "correcte": true,
+   "duree_s": 4.4,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT COUNT(*) AS nb_vehicules FROM gold.fct_immatriculations AS i JOIN gold.dim_commune AS c ON i.commune = c.commune WHERE i.statut = 'En circulation' AND c.province = 'Îles Loyauté' LIMIT 1000",
+    "SELECT province, COUNT(*) AS nb FROM gold.dim_commune GROUP BY province ORDER BY nb DESC LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     "Nord",
+     16
+    ],
+    [
+     "Sud",
+     13
+    ],
+    [
+     "Îles Loyauté",
+     3
+    ],
+    [
+     "Nord et Sud",
+     1
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM fct_immatriculations f JOIN dim_commune c ON c.commune = f.commune WHERE statut = 'En circulation' AND c.province = 'Îles Loyauté'",
+   "lignes_attendues": [
+    [
+     13822
+    ]
+   ]
+  },
+  {
+   "id": "q17",
+   "question": "Combien de véhicules ont été mis en circulation pour la première fois en Nouvelle-Calédonie en 2025 ?",
+   "correcte": true,
+   "duree_s": 4.2,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT COUNT(*) AS total_1ere_circulation_2025, COUNT(*) FILTER(WHERE statut = 'En circulation') AS encore_en_circulation FROM gold.fct_immatriculations WHERE date_premiere_circulation_nc >= CAST('2025-01-01' AS DATE) AND date_premiere_circulation_nc < CAST('2026-01-01' AS DATE) LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     4559,
+     4543
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM fct_immatriculations WHERE year(date_premiere_circulation_nc) = 2025",
+   "lignes_attendues": [
+    [
+     4559
+    ]
+   ]
+  },
+  {
+   "id": "q18",
+   "question": "Donne, pour chaque année de 2020 à 2025, le nombre de premières mises en circulation en Nouvelle-Calédonie.",
+   "correcte": true,
+   "duree_s": 3.5,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT YEAR(date_premiere_circulation_nc) AS annee, COUNT(*) AS nb_immatriculations FROM gold.fct_immatriculations WHERE date_premiere_circulation_nc BETWEEN CAST('2020-01-01' AS DATE) AND CAST('2025-12-31' AS DATE) GROUP BY YEAR(date_premiere_circulation_nc) ORDER BY annee LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     2020,
+     9397
+    ],
+    [
+     2021,
+     9593
+    ],
+    [
+     2022,
+     9613
+    ],
+    [
+     2023,
+     9823
+    ],
+    [
+     2024,
+     4927
+    ],
+    [
+     2025,
+     4559
+    ]
+   ],
+   "sql_attendu": "SELECT year(date_premiere_circulation_nc) a, count(*) FROM fct_immatriculations WHERE year(date_premiere_circulation_nc) BETWEEN 2020 AND 2025 GROUP BY 1",
+   "lignes_attendues": [
+    [
+     2020,
+     9397
+    ],
+    [
+     2025,
+     4559
+    ],
+    [
+     2021,
+     9593
+    ],
+    [
+     2022,
+     9613
+    ],
+    [
+     2024,
+     4927
+    ],
+    [
+     2023,
+     9823
+    ]
+   ]
+  },
+  {
+   "id": "q19",
+   "question": "Combien de véhicules électriques ont été mis en circulation pour la première fois en Nouvelle-Calédonie chaque année de 2020 à 2025 ?",
+   "correcte": true,
+   "duree_s": 7.0,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT code_energie, libelle_energie, famille_energie FROM gold.dim_energie ORDER BY code_energie LIMIT 1000",
+    "SELECT d.annee, e.libelle_energie, COUNT(*) AS nb FROM gold.fct_immatriculations AS i JOIN gold.dim_date AS d ON d.date_jour = i.date_premiere_circulation_nc JOIN gold.dim_energie AS e ON e.code_energie = i.code_energie WHERE d.annee BETWEEN 2020 AND 2025 GROUP BY d.annee, e.libelle_energie ORDER BY d.annee, nb DESC LIMIT 1000",
+    "SELECT d.annee, COUNT(*) AS nb_electriques FROM gold.fct_immatriculations AS i JOIN gold.dim_date AS d ON d.date_jour = i.date_premiere_circulation_nc JOIN gold.dim_energie AS e ON e.code_energie = i.code_energie WHERE e.famille_energie = 'Électrique' AND d.annee BETWEEN 2020 AND 2025 GROUP BY d.annee ORDER BY d.annee LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     2020,
+     66
+    ],
+    [
+     2021,
+     135
+    ],
+    [
+     2022,
+     204
+    ],
+    [
+     2023,
+     264
+    ],
+    [
+     2024,
+     160
+    ],
+    [
+     2025,
+     117
+    ]
+   ],
+   "sql_attendu": "SELECT year(date_premiere_circulation_nc) a, count(*) FROM fct_immatriculations f JOIN dim_energie e ON e.code_energie = f.code_energie WHERE e.famille_energie = 'Électrique' AND year(date_premiere_circulation_nc) BETWEEN 2020 AND 2025 GROUP BY 1",
+   "lignes_attendues": [
+    [
+     2021,
+     135
+    ],
+    [
+     2022,
+     204
+    ],
+    [
+     2023,
+     264
+    ],
+    [
+     2024,
+     160
+    ],
+    [
+     2020,
+     66
+    ],
+    [
+     2025,
+     117
+    ]
+   ]
+  },
+  {
+   "id": "q20",
+   "question": "Quelle est la puissance fiscale moyenne des voitures particulières en circulation, arrondie à une décimale ?",
+   "correcte": true,
+   "duree_s": 4.6,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT code_genre, libelle_genre FROM gold.dim_genre ORDER BY code_genre LIMIT 1000",
+    "SELECT COUNT(*) AS nb_vehicules, COUNT(puissance_administrative_cv) AS nb_cv_connue, ROUND(AVG(puissance_administrative_cv), 1) AS puissance_fiscale_moyenne_cv FROM gold.fct_immatriculations WHERE code_genre = 'VP' AND statut = 'En circulation' LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     225590,
+     220254,
+     8.2
+    ]
+   ],
+   "sql_attendu": "SELECT round(avg(puissance_administrative_cv), 1) FROM fct_immatriculations WHERE statut = 'En circulation' AND code_genre = 'VP'",
+   "lignes_attendues": [
+    [
+     8.2
+    ]
+   ]
+  },
+  {
+   "id": "q21",
+   "question": "Combien de véhicules en circulation appartiennent à des particuliers ?",
+   "correcte": true,
+   "duree_s": 4.2,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT COUNT(*) AS nb_vehicules FROM gold.fct_immatriculations WHERE statut = 'En circulation' AND type_proprietaire = 'Particulier' LIMIT 1000",
+    "SELECT type_proprietaire, COUNT(*) AS nb_vehicules FROM gold.fct_immatriculations WHERE statut = 'En circulation' GROUP BY type_proprietaire ORDER BY nb_vehicules DESC LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     "Particulier",
+     300439
+    ],
+    [
+     "STE - SOCIETE",
+     29902
+    ],
+    [
+     "CRE - ORGANISME DE CREDIT",
+     17334
+    ],
+    [
+     "DFSC - SOCIETE DE DEFISCALISATION",
+     9423
+    ],
+    [
+     "ADL - ADMINISTRATION LOCALE",
+     3772
+    ],
+    [
+     "ETP - ETABLISSEMENTS PUBLICS",
+     1543
+    ],
+    [
+     "ADE - ADMINISTRATION D'ETAT",
+     1086
+    ],
+    [
+     "ASS - ASSOCIATION",
+     927
+    ],
+    [
+     "ANC - ADMINISTRATION DE LA NOUVELLE-CALEDONIE",
+     806
+    ],
+    [
+     "ENT - ENTREPRISE",
+     615
+    ],
+    [
+     "VSL - ENTREPRISES DE TRANSPORT SANITAIRE",
+     439
+    ],
+    [
+     "CONCESS - CONCESSIONAIRE",
+     357
+    ],
+    [
+     "AUTO - AUTO ECOLE",
+     79
+    ],
+    [
+     "GIE - GROUPEMENT D'INTERET ECONOMIQUE",
+     66
+    ],
+    [
+     "CCD - CORPS CONSULAIRES",
+     27
+    ],
+    [
+     "FOND - FONDATION",
+     26
+    ],
+    [
+     "SYN - SYNDICAT",
+     25
+    ],
+    [
+     "CRE - ORGANISME DE CREDIT,STE - SOCIETE",
+     14
+    ],
+    [
+     "STE - SOCIETE,CRE - ORGANISME DE CREDIT",
+     10
+    ],
+    [
+     "SCE - SERVICE",
+     4
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM fct_immatriculations WHERE statut = 'En circulation' AND type_proprietaire = 'Particulier'",
+   "lignes_attendues": [
+    [
+     300439
+    ]
+   ]
+  },
+  {
+   "id": "q22",
+   "question": "Combien de véhicules en circulation sont en location ?",
+   "correcte": true,
+   "duree_s": 3.8,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT COUNT(*) AS nb_vehicules_en_location FROM gold.fct_immatriculations WHERE statut = 'En circulation' AND en_location = TRUE LIMIT 1000",
+    "SELECT COUNT(*) AS parc_total FROM gold.fct_immatriculations WHERE statut = 'En circulation' LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     366896
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM fct_immatriculations WHERE statut = 'En circulation' AND en_location",
+   "lignes_attendues": [
+    [
+     33203
+    ]
+   ]
+  },
+  {
+   "id": "q23",
+   "question": "Quel pourcentage des véhicules en circulation appartient à des particuliers, arrondi à une décimale ?",
+   "correcte": true,
+   "duree_s": 5.5,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT type_proprietaire, COUNT(*) AS nb FROM gold.fct_immatriculations WHERE statut = 'En circulation' GROUP BY type_proprietaire ORDER BY nb DESC LIMIT 1000",
+    "SELECT COUNT(*) AS total, SUM(CASE WHEN type_proprietaire = 'Particulier' THEN 1 ELSE 0 END) AS particuliers, ROUND(100.0 * SUM(CASE WHEN type_proprietaire = 'Particulier' THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_particuliers FROM gold.fct_immatriculations WHERE statut = 'En circulation' LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     366896,
+     300439,
+     "81.9000000000000000"
+    ]
+   ],
+   "sql_attendu": "SELECT round(100.0 * count_if(type_proprietaire = 'Particulier') / count(*), 1) FROM fct_immatriculations WHERE statut = 'En circulation'",
+   "lignes_attendues": [
+    [
+     "81.9000000000000000"
+    ]
+   ]
+  },
+  {
+   "id": "q24",
+   "question": "Combien de véhicules de la marque Toyota sont en circulation ?",
+   "correcte": true,
+   "duree_s": 2.9,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT COUNT(*) AS nb_toyota_en_circulation FROM gold.fct_immatriculations WHERE statut = 'En circulation' AND marque = 'TOYOTA' LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     25420
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM fct_immatriculations WHERE statut = 'En circulation' AND marque = 'TOYOTA'",
+   "lignes_attendues": [
+    [
+     25420
+    ]
+   ]
+  },
+  {
+   "id": "q25",
+   "question": "Combien de motocyclettes (genre MOTO) sont en circulation ?",
+   "correcte": true,
+   "duree_s": 5.0,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT COUNT(*) AS nb_motos_en_circulation FROM gold.fct_immatriculations AS i JOIN gold.dim_genre AS g ON g.code_genre = i.code_genre WHERE i.statut = 'En circulation' AND g.code_genre = 'MOTO' LIMIT 1000",
+    "SELECT g.code_genre, g.libelle_genre, COUNT(*) AS nb FROM gold.fct_immatriculations AS i JOIN gold.dim_genre AS g ON g.code_genre = i.code_genre WHERE i.statut = 'En circulation' GROUP BY g.code_genre, g.libelle_genre ORDER BY nb DESC LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     "VP",
+     "VOITURE PARTICULIERE",
+     225590
+    ],
+    [
+     "CTTE",
+     "CAMIONNETTE",
+     88383
+    ],
+    [
+     "CYCL",
+     "CYCLOMOTEUR",
+     12907
+    ],
+    [
+     "REM",
+     "REMORQUE ROUTIERE",
+     9435
+    ],
+    [
+     "MOTO",
+     "MOTOCYCLETTE",
+     8885
+    ],
+    [
+     "CAM",
+     "CAMION",
+     5797
+    ],
+    [
+     "MTL",
+     "MOTOCYCLETTE LEGERE",
+     4860
+    ],
+    [
+     "TRA",
+     "TRACTEUR AGRICOLE",
+     2356
+    ],
+    [
+     "TCP",
+     "TRANSPORT EN COMMUN DE PERSONNES",
+     2150
+    ],
+    [
+     "VASP",
+     "VEHICULE AUTOMOTEUR SPECIALISE",
+     1862
+    ],
+    [
+     "SREM",
+     "SEMI-REMORQUE ROUTIERE",
+     977
+    ],
+    [
+     "QMLO",
+     "QUADRICYLCES A MOTEUR LOURD",
+     932
+    ],
+    [
+     "TRR",
+     "TRACTEUR ROUTIER",
+     921
+    ],
+    [
+     "QMLG",
+     "QUADRICYLCES A MOTEUR LEGER",
+     854
+    ],
+    [
+     "RESP",
+     "REMORQUE SPECIALISE",
+     655
+    ],
+    [
+     "TM",
+     "TRICYLES A MOTEUR",
+     301
+    ],
+    [
+     "SREA",
+     "SEMI-REMORQUE AGRICOLE",
+     13
+    ],
+    [
+     "SRSP",
+     "SEMI-REMORQUE SPECIALISEE",
+     11
+    ],
+    [
+     "REA",
+     "REMORQUE AGRICOLE",
+     3
+    ],
+    [
+     "MIAR",
+     "MACHINE ET INSTRUMENT AGRICOLE REMO",
+     2
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM fct_immatriculations WHERE statut = 'En circulation' AND code_genre = 'MOTO'",
+   "lignes_attendues": [
+    [
+     8885
+    ]
+   ]
+  },
+  {
+   "id": "q26",
+   "question": "Quels sont les 5 genres de véhicules les plus nombreux en circulation (libellé du genre), avec leur nombre ?",
+   "correcte": true,
+   "duree_s": 3.3,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT g.libelle_genre, COUNT(*) AS nb_vehicules FROM gold.fct_immatriculations AS i JOIN gold.dim_genre AS g ON g.code_genre = i.code_genre WHERE i.statut = 'En circulation' GROUP BY g.libelle_genre ORDER BY nb_vehicules DESC LIMIT 5"
+   ],
+   "lignes_agent": [
+    [
+     "VOITURE PARTICULIERE",
+     225590
+    ],
+    [
+     "CAMIONNETTE",
+     88383
+    ],
+    [
+     "CYCLOMOTEUR",
+     12907
+    ],
+    [
+     "REMORQUE ROUTIERE",
+     9435
+    ],
+    [
+     "MOTOCYCLETTE",
+     8885
+    ]
+   ],
+   "sql_attendu": "SELECT g.libelle_genre, count(*) n FROM fct_immatriculations f JOIN dim_genre g ON g.code_genre = f.code_genre WHERE statut = 'En circulation' GROUP BY 1 ORDER BY n DESC LIMIT 5",
+   "lignes_attendues": [
+    [
+     "VOITURE PARTICULIERE",
+     225590
+    ],
+    [
+     "CAMIONNETTE",
+     88383
+    ],
+    [
+     "CYCLOMOTEUR",
+     12907
+    ],
+    [
+     "REMORQUE ROUTIERE",
+     9435
+    ],
+    [
+     "MOTOCYCLETTE",
+     8885
+    ]
+   ]
+  },
+  {
+   "id": "q27",
+   "question": "Combien de véhicules, tous statuts confondus, ont été mis en circulation pour la première fois en Nouvelle-Calédonie avant 1950 ?",
+   "correcte": true,
+   "duree_s": 5.4,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT COUNT(*) AS nb_vehicules FROM gold.fct_immatriculations WHERE date_premiere_circulation_nc < CAST('1950-01-01' AS DATE) LIMIT 1000",
+    "SELECT statut, COUNT(*) AS nb FROM gold.fct_immatriculations WHERE date_premiere_circulation_nc < CAST('1950-01-01' AS DATE) GROUP BY statut ORDER BY nb DESC LIMIT 1000",
+    "SELECT MIN(date_premiere_circulation_nc) AS plus_ancienne, MAX(date_premiere_circulation_nc) AS plus_recente, COUNT(*) AS nb, COUNT(date_premiere_circulation_nc) AS nb_dates_renseignees FROM gold.fct_immatriculations WHERE date_premiere_circulation_nc < CAST('1950-01-01' AS DATE) LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     "1910-02-21",
+     "1949-12-23",
+     178,
+     178
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM fct_immatriculations WHERE date_premiere_circulation_nc < DATE '1950-01-01'",
+   "lignes_attendues": [
+    [
+     178
+    ]
+   ]
+  },
+  {
+   "id": "q28",
+   "question": "Combien de communes compte la Nouvelle-Calédonie dans ces données ?",
+   "correcte": true,
+   "duree_s": 2.4,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT COUNT(*) AS nb_communes, COUNT(DISTINCT province) AS nb_provinces FROM gold.dim_commune LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     33,
+     4
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM dim_commune",
+   "lignes_attendues": [
+    [
+     33
+    ]
+   ]
+  },
+  {
+   "id": "q29",
+   "question": "Quelles communes appartiennent à la province Nord ?",
+   "correcte": true,
+   "duree_s": 3.4,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT commune FROM gold.dim_commune WHERE province = 'Nord' ORDER BY commune LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     "BELEP"
+    ],
+    [
+     "CANALA"
+    ],
+    [
+     "HIENGHENE"
+    ],
+    [
+     "HOUAILOU"
+    ],
+    [
+     "KAALA-GOMEN"
+    ],
+    [
+     "KONE"
+    ],
+    [
+     "KOUAOUA"
+    ],
+    [
+     "KOUMAC"
+    ],
+    [
+     "OUEGOA"
+    ],
+    [
+     "POINDIMIE"
+    ],
+    [
+     "PONERIHOUEN"
+    ],
+    [
+     "POUEBO"
+    ],
+    [
+     "POUEMBOUT"
+    ],
+    [
+     "POUM"
+    ],
+    [
+     "TOUHO"
+    ],
+    [
+     "VOH"
+    ]
+   ],
+   "sql_attendu": "SELECT commune FROM dim_commune WHERE province = 'Nord'",
+   "lignes_attendues": [
+    [
+     "KAALA-GOMEN"
+    ],
+    [
+     "PONERIHOUEN"
+    ],
+    [
+     "HOUAILOU"
+    ],
+    [
+     "POUM"
+    ],
+    [
+     "BELEP"
+    ],
+    [
+     "CANALA"
+    ],
+    [
+     "TOUHO"
+    ],
+    [
+     "KOUAOUA"
+    ],
+    [
+     "KONE"
+    ],
+    [
+     "OUEGOA"
+    ],
+    [
+     "POUEBO"
+    ],
+    [
+     "HIENGHENE"
+    ],
+    [
+     "POINDIMIE"
+    ],
+    [
+     "VOH"
+    ],
+    [
+     "KOUMAC"
+    ],
+    [
+     "POUEMBOUT"
+    ]
+   ]
+  },
+  {
+   "id": "q30",
+   "question": "Combien de ventes de véhicules d'occasion (transferts de certificat) compte-t-on au total ?",
+   "correcte": true,
+   "duree_s": 2.5,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT COUNT(*) AS nb_transferts FROM gold.fct_transferts LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     105484
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM fct_transferts",
+   "lignes_attendues": [
+    [
+     105484
+    ]
+   ]
+  },
+  {
+   "id": "q31",
+   "question": "Combien de véhicules d'occasion ont été vendus en 2025 ?",
+   "correcte": true,
+   "duree_s": 3.3,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT COUNT(*) AS nb_transferts, COUNT(DISTINCT numero_immat) AS nb_vehicules FROM gold.fct_transferts WHERE date_transaction >= CAST('2025-01-01' AS DATE) AND date_transaction < CAST('2026-01-01' AS DATE) LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     22138,
+     20244
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM fct_transferts WHERE year(date_transaction) = 2025",
+   "lignes_attendues": [
+    [
+     22138
+    ]
+   ]
+  },
+  {
+   "id": "q32",
+   "question": "Donne le nombre de ventes de véhicules d'occasion par année.",
+   "correcte": true,
+   "duree_s": 3.6,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT annee, COUNT(*) AS nb_ventes FROM gold.fct_transferts AS t JOIN gold.dim_date AS d ON t.date_transaction = d.date_jour GROUP BY annee ORDER BY annee LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     2022,
+     23384
+    ],
+    [
+     2023,
+     22602
+    ],
+    [
+     2024,
+     19675
+    ],
+    [
+     2025,
+     22138
+    ],
+    [
+     2026,
+     17685
+    ]
+   ],
+   "sql_attendu": "SELECT year(date_transaction) a, count(*) FROM fct_transferts GROUP BY 1",
+   "lignes_attendues": [
+    [
+     2025,
+     22138
+    ],
+    [
+     2023,
+     22602
+    ],
+    [
+     2026,
+     17685
+    ],
+    [
+     2022,
+     23384
+    ],
+    [
+     2024,
+     19675
+    ]
+   ]
+  },
+  {
+   "id": "q33",
+   "question": "Quel mois de 2025 (nom du mois) a compté le plus de ventes de véhicules d'occasion, et combien ?",
+   "correcte": false,
+   "duree_s": 3.2,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT d.libelle_mois, d.mois, COUNT(*) AS nb_ventes FROM gold.fct_transferts AS t JOIN gold.dim_date AS d ON d.date_jour = t.date_transaction WHERE d.annee = 2025 GROUP BY d.libelle_mois, d.mois ORDER BY nb_ventes DESC LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     "octobre",
+     10,
+     2348
+    ],
+    [
+     "septembre",
+     9,
+     2324
+    ],
+    [
+     "juillet",
+     7,
+     1963
+    ],
+    [
+     "janvier",
+     1,
+     1948
+    ],
+    [
+     "août",
+     8,
+     1823
+    ],
+    [
+     "mars",
+     3,
+     1814
+    ],
+    [
+     "février",
+     2,
+     1807
+    ],
+    [
+     "décembre",
+     12,
+     1777
+    ],
+    [
+     "avril",
+     4,
+     1670
+    ],
+    [
+     "juin",
+     6,
+     1668
+    ],
+    [
+     "novembre",
+     11,
+     1570
+    ],
+    [
+     "mai",
+     5,
+     1426
+    ]
+   ],
+   "sql_attendu": "SELECT d.libelle_mois, count(*) n FROM fct_transferts t JOIN dim_date d ON d.date_jour = t.date_transaction WHERE year(date_transaction) = 2025 GROUP BY 1 ORDER BY n DESC LIMIT 1",
+   "lignes_attendues": [
+    [
+     "octobre",
+     2348
+    ]
+   ]
+  },
+  {
+   "id": "q34",
+   "question": "Donne le nombre de ventes de véhicules d'occasion pour chaque mois de 2025 (numéro du mois, de 1 à 12).",
+   "correcte": true,
+   "duree_s": 3.3,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT d.mois, COUNT(*) AS nb_ventes FROM gold.fct_transferts AS t JOIN gold.dim_date AS d ON t.date_transaction = d.date_jour WHERE d.annee = 2025 GROUP BY d.mois ORDER BY d.mois LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     1,
+     1948
+    ],
+    [
+     2,
+     1807
+    ],
+    [
+     3,
+     1814
+    ],
+    [
+     4,
+     1670
+    ],
+    [
+     5,
+     1426
+    ],
+    [
+     6,
+     1668
+    ],
+    [
+     7,
+     1963
+    ],
+    [
+     8,
+     1823
+    ],
+    [
+     9,
+     2324
+    ],
+    [
+     10,
+     2348
+    ],
+    [
+     11,
+     1570
+    ],
+    [
+     12,
+     1777
+    ]
+   ],
+   "sql_attendu": "SELECT month(date_transaction) m, count(*) FROM fct_transferts WHERE year(date_transaction) = 2025 GROUP BY 1",
+   "lignes_attendues": [
+    [
+     8,
+     1823
+    ],
+    [
+     6,
+     1668
+    ],
+    [
+     10,
+     2348
+    ],
+    [
+     11,
+     1570
+    ],
+    [
+     7,
+     1963
+    ],
+    [
+     1,
+     1948
+    ],
+    [
+     2,
+     1807
+    ],
+    [
+     3,
+     1814
+    ],
+    [
+     9,
+     2324
+    ],
+    [
+     4,
+     1670
+    ],
+    [
+     5,
+     1426
+    ],
+    [
+     12,
+     1777
+    ]
+   ]
+  },
+  {
+   "id": "q35",
+   "question": "Quel pourcentage des ventes de véhicules d'occasion de 2025 a été fait par téléservice, arrondi à une décimale ?",
+   "correcte": false,
+   "duree_s": 3.0,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT CASE WHEN par_teleservice THEN 'Par téléservice' ELSE 'Autre canal' END AS canal, COUNT(*) AS nb_transferts, ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 1) AS pct FROM gold.fct_transferts WHERE date_transaction >= CAST('2025-01-01' AS DATE) AND date_transaction < CAST('2026-01-01' AS DATE) GROUP BY 1 ORDER BY 1 LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     "Autre canal",
+     17835,
+     "80.6000000000000000"
+    ],
+    [
+     "Par téléservice",
+     4303,
+     "19.4000000000000000"
+    ]
+   ],
+   "sql_attendu": "SELECT round(100.0 * count_if(par_teleservice) / count(*), 1) FROM fct_transferts WHERE year(date_transaction) = 2025",
+   "lignes_attendues": [
+    [
+     "19.4000000000000000"
+    ]
+   ]
+  },
+  {
+   "id": "q36",
+   "question": "Combien de véhicules électriques ont été vendus d'occasion en 2025 ?",
+   "correcte": true,
+   "duree_s": 8.1,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT code_energie, libelle_energie, famille_energie FROM gold.dim_energie ORDER BY code_energie LIMIT 1000",
+    "SELECT COUNT(*) AS nb_transferts_2025 FROM gold.fct_transferts WHERE date_transaction >= CAST('2025-01-01' AS DATE) AND date_transaction < CAST('2026-01-01' AS DATE) LIMIT 1000",
+    "SELECT COUNT(*) AS nb_electriques_2025, COUNT(DISTINCT t.numero_immat) AS nb_vehicules_distincts FROM gold.fct_transferts AS t JOIN gold.dim_energie AS e ON e.code_energie = t.code_energie WHERE t.date_transaction >= CAST('2025-01-01' AS DATE) AND t.date_transaction < CAST('2026-01-01' AS DATE) AND e.famille_energie = 'Électrique' LIMIT 1000",
+    "SELECT e.libelle_energie, COUNT(*) AS nb FROM gold.fct_transferts AS t JOIN gold.dim_energie AS e ON e.code_energie = t.code_energie WHERE t.date_transaction >= CAST('2025-01-01' AS DATE) AND t.date_transaction < CAST('2026-01-01' AS DATE) GROUP BY e.libelle_energie ORDER BY nb DESC LIMIT 1000",
+    "SELECT d.mois, COUNT(*) AS nb_electriques FROM gold.fct_transferts AS t JOIN gold.dim_energie AS e ON e.code_energie = t.code_energie JOIN gold.dim_date AS d ON d.date_jour = t.date_transaction WHERE t.date_transaction >= CAST('2025-01-01' AS DATE) AND t.date_transaction < CAST('2026-01-01' AS DATE) AND e.famille_energie = 'Électrique' GROUP BY d.mois ORDER BY d.mois LIMIT 1000",
+    "SELECT COUNT(*) AS total, SUM(CASE WHEN e.famille_energie = 'Électrique' THEN 1 ELSE 0 END) AS electriques, ROUND(100.0 * SUM(CASE WHEN e.famille_energie = 'Électrique' THEN 1 ELSE 0 END) / COUNT(*), 2) AS part_pct FROM gold.fct_transferts AS t JOIN gold.dim_energie AS e ON e.code_energie = t.code_energie WHERE t.date_transaction >= CAST('2025-01-01' AS DATE) AND t.date_transaction < CAST('2026-01-01' AS DATE) LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     22138,
+     91,
+     "0.4100000000000000"
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM fct_transferts t JOIN dim_energie e ON e.code_energie = t.code_energie WHERE year(date_transaction) = 2025 AND e.famille_energie = 'Électrique'",
+   "lignes_attendues": [
+    [
+     91
+    ]
+   ]
+  },
+  {
+   "id": "q37",
+   "question": "Quelles sont les 5 marques les plus vendues d'occasion en 2025, avec leur nombre de ventes ?",
+   "correcte": true,
+   "duree_s": 2.8,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT marque, COUNT(*) AS nb_ventes FROM gold.fct_transferts WHERE date_transaction >= CAST('2025-01-01' AS DATE) AND date_transaction < CAST('2026-01-01' AS DATE) GROUP BY marque ORDER BY nb_ventes DESC LIMIT 5"
+   ],
+   "lignes_agent": [
+    [
+     "TOYOTA",
+     2339
+    ],
+    [
+     "FORD",
+     1842
+    ],
+    [
+     "PEUGEOT",
+     1831
+    ],
+    [
+     "CITROEN",
+     1520
+    ],
+    [
+     "RENAULT",
+     1504
+    ]
+   ],
+   "sql_attendu": "SELECT marque, count(*) n FROM fct_transferts WHERE year(date_transaction) = 2025 GROUP BY 1 ORDER BY n DESC LIMIT 5",
+   "lignes_attendues": [
+    [
+     "TOYOTA",
+     2339
+    ],
+    [
+     "FORD",
+     1842
+    ],
+    [
+     "PEUGEOT",
+     1831
+    ],
+    [
+     "CITROEN",
+     1520
+    ],
+    [
+     "RENAULT",
+     1504
+    ]
+   ]
+  },
+  {
+   "id": "q38",
+   "question": "Combien de ventes de véhicules d'occasion en 2025 ont un acquéreur domicilié à Nouméa ?",
+   "correcte": true,
+   "duree_s": 5.7,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT COUNT(*) AS nb_ventes FROM gold.fct_transferts AS t JOIN gold.dim_date AS d ON d.date_jour = t.date_transaction WHERE d.annee = 2025 AND t.commune = 'NOUMEA' LIMIT 1000",
+    "SELECT commune, COUNT(*) AS nb FROM gold.fct_transferts AS t JOIN gold.dim_date AS d ON d.date_jour = t.date_transaction WHERE d.annee = 2025 AND UPPER(commune) LIKE '%NOUM%' GROUP BY commune ORDER BY nb DESC LIMIT 1000",
+    "SELECT COUNT(*) AS total_2025, SUM(CASE WHEN t.commune = 'NOUMEA' THEN 1 ELSE 0 END) AS noumea, ROUND(100.0 * SUM(CASE WHEN t.commune = 'NOUMEA' THEN 1 ELSE 0 END) / COUNT(*), 1) AS part_pct FROM gold.fct_transferts AS t JOIN gold.dim_date AS d ON d.date_jour = t.date_transaction WHERE d.annee = 2025 LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     22138,
+     9751,
+     "44.0000000000000000"
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM fct_transferts WHERE year(date_transaction) = 2025 AND commune = 'NOUMEA'",
+   "lignes_attendues": [
+    [
+     9751
+    ]
+   ]
+  },
+  {
+   "id": "q39",
+   "question": "Donne le nombre de ventes de véhicules d'occasion en 2025 par province de l'acquéreur.",
+   "correcte": false,
+   "duree_s": 4.2,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT c.province, COUNT(*) AS nb_ventes FROM gold.fct_transferts AS t JOIN gold.dim_date AS d ON d.date_jour = t.date_transaction LEFT JOIN gold.dim_commune AS c ON c.commune = t.commune WHERE d.annee = 2025 GROUP BY c.province ORDER BY nb_ventes DESC LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     "Sud",
+     18959
+    ],
+    [
+     "Nord",
+     2588
+    ],
+    [
+     "Îles Loyauté",
+     361
+    ],
+    [
+     "Nord et Sud",
+     229
+    ],
+    [
+     null,
+     1
+    ]
+   ],
+   "sql_attendu": "SELECT c.province, count(*) FROM fct_transferts t JOIN dim_commune c ON c.commune = t.commune WHERE year(date_transaction) = 2025 GROUP BY 1",
+   "lignes_attendues": [
+    [
+     "Sud",
+     18959
+    ],
+    [
+     "Nord et Sud",
+     229
+    ],
+    [
+     "Îles Loyauté",
+     361
+    ],
+    [
+     "Nord",
+     2588
+    ]
+   ]
+  },
+  {
+   "id": "q40",
+   "question": "Combien de ventes de véhicules d'occasion ont eu lieu un samedi en 2025 ?",
+   "correcte": true,
+   "duree_s": 7.2,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT jour_semaine, libelle_jour, COUNT(*) AS nb_jours FROM gold.dim_date WHERE annee = 2025 GROUP BY jour_semaine, libelle_jour ORDER BY jour_semaine LIMIT 1000",
+    "SELECT COUNT(*) AS nb_ventes_samedi_2025 FROM gold.fct_transferts AS t JOIN gold.dim_date AS d ON t.date_transaction = d.date_jour WHERE d.annee = 2025 AND LOWER(d.libelle_jour) LIKE '%samedi%' LIMIT 1000",
+    "SELECT d.libelle_jour AS jour, COUNT(*) AS nb_ventes, ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 1) AS part_pct FROM gold.fct_transferts AS t JOIN gold.dim_date AS d ON t.date_transaction = d.date_jour WHERE d.annee = 2025 GROUP BY d.libelle_jour, d.jour_semaine ORDER BY d.jour_semaine LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     "lundi",
+     4287,
+     "19.4000000000000000"
+    ],
+    [
+     "mardi",
+     4401,
+     "19.9000000000000000"
+    ],
+    [
+     "mercredi",
+     4565,
+     "20.6000000000000000"
+    ],
+    [
+     "jeudi",
+     4255,
+     "19.2000000000000000"
+    ],
+    [
+     "vendredi",
+     4239,
+     "19.1000000000000000"
+    ],
+    [
+     "samedi",
+     171,
+     "0.8000000000000000"
+    ],
+    [
+     "dimanche",
+     220,
+     "1.0000000000000000"
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM fct_transferts WHERE year(date_transaction) = 2025 AND day_of_week(date_transaction) = 6",
+   "lignes_attendues": [
+    [
+     171
+    ]
+   ]
+  },
+  {
+   "id": "q41",
+   "question": "Quel jour de la semaine compte le plus de ventes de véhicules d'occasion, toutes années confondues, et combien ?",
+   "correcte": false,
+   "duree_s": 5.6,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT d.jour_semaine, d.libelle_jour AS jour, COUNT(*) AS nb_ventes, ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 1) AS part_pct FROM gold.fct_transferts AS t JOIN gold.dim_date AS d ON d.date_jour = t.date_transaction GROUP BY d.jour_semaine, d.libelle_jour ORDER BY d.jour_semaine LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     1,
+     "lundi",
+     20554,
+     "19.5000000000000000"
+    ],
+    [
+     2,
+     "mardi",
+     20984,
+     "19.9000000000000000"
+    ],
+    [
+     3,
+     "mercredi",
+     21318,
+     "20.2000000000000000"
+    ],
+    [
+     4,
+     "jeudi",
+     18458,
+     "17.5000000000000000"
+    ],
+    [
+     5,
+     "vendredi",
+     22363,
+     "21.2000000000000000"
+    ],
+    [
+     6,
+     "samedi",
+     799,
+     "0.8000000000000000"
+    ],
+    [
+     7,
+     "dimanche",
+     1008,
+     "1.0000000000000000"
+    ]
+   ],
+   "sql_attendu": "SELECT d.libelle_jour, count(*) n FROM fct_transferts t JOIN dim_date d ON d.date_jour = t.date_transaction GROUP BY 1 ORDER BY n DESC LIMIT 1",
+   "lignes_attendues": [
+    [
+     "vendredi",
+     22363
+    ]
+   ]
+  },
+  {
+   "id": "q42",
+   "question": "Combien de véhicules d'occasion ont été achetés par des particuliers en 2025 ?",
+   "correcte": true,
+   "duree_s": 6.0,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT COUNT(*) AS nb_transferts FROM gold.fct_transferts AS t JOIN gold.dim_date AS d ON t.date_transaction = d.date_jour WHERE d.annee = 2025 AND t.type_nouveau_proprietaire = 'Particulier' LIMIT 1000",
+    "SELECT t.type_nouveau_proprietaire, COUNT(*) AS nb_transferts, COUNT(DISTINCT t.numero_immat) AS nb_vehicules_distincts, ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 1) AS part_pct FROM gold.fct_transferts AS t JOIN gold.dim_date AS d ON t.date_transaction = d.date_jour WHERE d.annee = 2025 GROUP BY t.type_nouveau_proprietaire ORDER BY nb_transferts DESC LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     "Particulier",
+     18215,
+     16647,
+     "82.3000000000000000"
+    ],
+    [
+     "STE - SOCIETE",
+     2121,
+     2092,
+     "9.6000000000000000"
+    ],
+    [
+     "CRE - ORGANISME DE CREDIT",
+     1485,
+     1470,
+     "6.7000000000000000"
+    ],
+    [
+     "ENT - ENTREPRISE",
+     130,
+     128,
+     "0.6000000000000000"
+    ],
+    [
+     "GIE - GROUPEMENT D'INTERET ECONOMIQUE",
+     79,
+     79,
+     "0.4000000000000000"
+    ],
+    [
+     "VSL - ENTREPRISES DE TRANSPORT SANITAIRE",
+     36,
+     36,
+     "0.2000000000000000"
+    ],
+    [
+     "ASS - ASSOCIATION",
+     23,
+     23,
+     "0.1000000000000000"
+    ],
+    [
+     "ADL - ADMINISTRATION LOCALE",
+     14,
+     14,
+     "0.1000000000000000"
+    ],
+    [
+     "ADE - ADMINISTRATION D'ETAT",
+     11,
+     11,
+     "0E-16"
+    ],
+    [
+     "ETP - ETABLISSEMENTS PUBLICS",
+     8,
+     8,
+     "0E-16"
+    ],
+    [
+     "CONCESS - CONCESSIONAIRE",
+     7,
+     7,
+     "0E-16"
+    ],
+    [
+     "AUTO - AUTO ECOLE",
+     6,
+     6,
+     "0E-16"
+    ],
+    [
+     "FOND - FONDATION",
+     2,
+     2,
+     "0E-16"
+    ],
+    [
+     "SCE - SERVICE",
+     1,
+     1,
+     "0E-16"
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM fct_transferts WHERE year(date_transaction) = 2025 AND type_nouveau_proprietaire = 'Particulier'",
+   "lignes_attendues": [
+    [
+     18215
+    ]
+   ]
+  },
+  {
+   "id": "q43",
+   "question": "Combien de véhicules différents ont été vendus d'occasion au moins deux fois ?",
+   "correcte": true,
+   "duree_s": 6.4,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT COUNT(*) AS nb_vehicules FROM (SELECT numero_immat FROM gold.fct_transferts GROUP BY numero_immat HAVING COUNT(*) >= 2) AS t LIMIT 1000",
+    "SELECT COUNT(*) AS nb_transferts, COUNT(DISTINCT numero_immat) AS nb_vehicules_distincts, MIN(date_transaction) AS debut, MAX(date_transaction) AS fin FROM gold.fct_transferts LIMIT 1000",
+    "SELECT nb_ventes, COUNT(*) AS nb_vehicules FROM (SELECT numero_immat, COUNT(*) AS nb_ventes FROM gold.fct_transferts GROUP BY numero_immat) AS t GROUP BY nb_ventes ORDER BY nb_ventes LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     1,
+     51514
+    ],
+    [
+     2,
+     16458
+    ],
+    [
+     3,
+     4575
+    ],
+    [
+     4,
+     1237
+    ],
+    [
+     5,
+     317
+    ],
+    [
+     6,
+     85
+    ],
+    [
+     7,
+     30
+    ],
+    [
+     8,
+     6
+    ],
+    [
+     9,
+     2
+    ],
+    [
+     10,
+     1
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM (SELECT numero_immat FROM fct_transferts GROUP BY 1 HAVING count(*) >= 2)",
+   "lignes_attendues": [
+    [
+     22711
+    ]
+   ]
+  },
+  {
+   "id": "q44",
+   "question": "Combien de voitures particulières ont été vendues d'occasion au premier trimestre 2026 ?",
+   "correcte": true,
+   "duree_s": 6.9,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT code_genre, libelle_genre FROM gold.dim_genre ORDER BY code_genre LIMIT 1000",
+    "SELECT MAX(date_transaction) AS derniere_transaction, MIN(date_transaction) AS premiere_transaction, COUNT(*) AS nb FROM gold.fct_transferts LIMIT 1000",
+    "SELECT COUNT(*) AS nb_transferts, COUNT(DISTINCT t.numero_immat) AS nb_vehicules FROM gold.fct_transferts AS t JOIN gold.dim_date AS d ON d.date_jour = t.date_transaction WHERE d.annee = 2026 AND d.trimestre = 1 AND t.code_genre = 'VP' LIMIT 1000",
+    "SELECT t.type_nouveau_proprietaire, COUNT(*) AS nb FROM gold.fct_transferts AS t JOIN gold.dim_date AS d ON d.date_jour = t.date_transaction WHERE d.annee = 2026 AND d.trimestre = 1 AND t.code_genre = 'VP' GROUP BY t.type_nouveau_proprietaire ORDER BY nb DESC LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     "Particulier",
+     2858
+    ],
+    [
+     "STE - SOCIETE",
+     197
+    ],
+    [
+     "CRE - ORGANISME DE CREDIT",
+     130
+    ],
+    [
+     "ENT - ENTREPRISE",
+     8
+    ],
+    [
+     "VSL - ENTREPRISES DE TRANSPORT SANITAIRE",
+     6
+    ],
+    [
+     "CONCESS - CONCESSIONAIRE",
+     6
+    ],
+    [
+     "AUTO - AUTO ECOLE",
+     4
+    ],
+    [
+     "ASS - ASSOCIATION",
+     4
+    ],
+    [
+     "ADE - ADMINISTRATION D'ETAT",
+     2
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM fct_transferts WHERE code_genre = 'VP' AND date_transaction BETWEEN DATE '2026-01-01' AND DATE '2026-03-31'",
+   "lignes_attendues": [
+    [
+     3215
+    ]
+   ]
+  },
+  {
+   "id": "q45",
+   "question": "Donne le nombre de ventes d'occasion de véhicules hybrides non rechargeables (famille Hybride) par année.",
+   "correcte": true,
+   "duree_s": 5.7,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT code_energie, libelle_energie, famille_energie FROM gold.dim_energie WHERE LOWER(famille_energie) LIKE '%hybride%' ORDER BY famille_energie, libelle_energie LIMIT 1000",
+    "SELECT d.annee, COUNT(*) AS nb_ventes FROM gold.fct_transferts AS t JOIN gold.dim_energie AS e ON t.code_energie = e.code_energie JOIN gold.dim_date AS d ON t.date_transaction = d.date_jour WHERE e.famille_energie = 'Hybride' GROUP BY d.annee ORDER BY d.annee LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     2022,
+     237
+    ],
+    [
+     2023,
+     342
+    ],
+    [
+     2024,
+     390
+    ],
+    [
+     2025,
+     619
+    ],
+    [
+     2026,
+     568
+    ]
+   ],
+   "sql_attendu": "SELECT year(date_transaction) a, count(*) FROM fct_transferts t JOIN dim_energie e ON e.code_energie = t.code_energie WHERE e.famille_energie = 'Hybride' GROUP BY 1",
+   "lignes_attendues": [
+    [
+     2022,
+     237
+    ],
+    [
+     2025,
+     619
+    ],
+    [
+     2024,
+     390
+    ],
+    [
+     2026,
+     568
+    ],
+    [
+     2023,
+     342
+    ]
+   ]
+  },
+  {
+   "id": "q46",
+   "question": "Quelle est la puissance fiscale moyenne des véhicules vendus d'occasion en 2025, arrondie à une décimale ?",
+   "correcte": true,
+   "duree_s": 3.1,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT ROUND(AVG(t.puissance_administrative_cv), 1) AS puissance_fiscale_moyenne_cv, COUNT(*) AS nb_transferts, COUNT(t.puissance_administrative_cv) AS nb_cv_renseignes FROM gold.fct_transferts AS t JOIN gold.dim_date AS d ON t.date_transaction = d.date_jour WHERE d.annee = 2025 LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     9.3,
+     22138,
+     21444
+    ]
+   ],
+   "sql_attendu": "SELECT round(avg(puissance_administrative_cv), 1) FROM fct_transferts WHERE year(date_transaction) = 2025",
+   "lignes_attendues": [
+    [
+     9.3
+    ]
+   ]
+  },
+  {
+   "id": "q47",
+   "question": "Combien de ventes de véhicules d'occasion ont eu lieu en 2025 pour des véhicules mis en circulation avant 2010 ?",
+   "correcte": true,
+   "duree_s": 5.7,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT COUNT(*) AS nb_ventes FROM gold.fct_transferts AS t JOIN gold.dim_date AS d ON d.date_jour = t.date_transaction WHERE d.annee = 2025 AND t.date_premiere_circulation < CAST('2010-01-01' AS DATE) LIMIT 1000",
+    "SELECT COUNT(*) AS total_ventes_2025, COUNT_IF(t.date_premiere_circulation < CAST('2010-01-01' AS DATE)) AS avant_2010, COUNT_IF(t.date_premiere_circulation IS NULL) AS date_inconnue, ROUND(100.0 * COUNT_IF(t.date_premiere_circulation < CAST('2010-01-01' AS DATE)) / COUNT(*), 1) AS part_pct FROM gold.fct_transferts AS t JOIN gold.dim_date AS d ON d.date_jour = t.date_transaction WHERE d.annee = 2025 LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     22138,
+     4703,
+     1,
+     "21.2000000000000000"
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM fct_transferts WHERE year(date_transaction) = 2025 AND date_premiere_circulation < DATE '2010-01-01'",
+   "lignes_attendues": [
+    [
+     4703
+    ]
+   ]
+  },
+  {
+   "id": "q48",
+   "question": "Combien de ventes de véhicules d'occasion ont eu lieu en décembre 2024 ?",
+   "correcte": true,
+   "duree_s": 6.5,
+   "erreur_api": null,
+   "sql_executes": [
+    "SELECT COUNT(*) AS nb_transferts FROM gold.fct_transferts WHERE date_transaction >= CAST('2024-12-01' AS DATE) AND date_transaction < CAST('2025-01-01' AS DATE) LIMIT 1000",
+    "SELECT d.annee, d.mois, COUNT(*) AS nb_transferts FROM gold.fct_transferts AS t JOIN gold.dim_date AS d ON d.date_jour = t.date_transaction WHERE d.annee = 2024 GROUP BY d.annee, d.mois ORDER BY d.mois LIMIT 1000",
+    "SELECT d.mois, MIN(t.date_transaction) AS premier_jour, MAX(t.date_transaction) AS dernier_jour, COUNT(DISTINCT t.date_transaction) AS nb_jours_couverts FROM gold.fct_transferts AS t JOIN gold.dim_date AS d ON d.date_jour = t.date_transaction WHERE d.annee = 2024 GROUP BY d.mois ORDER BY d.mois LIMIT 1000"
+   ],
+   "lignes_agent": [
+    [
+     1,
+     "2024-01-01",
+     "2024-01-31",
+     30
+    ],
+    [
+     2,
+     "2024-02-01",
+     "2024-02-29",
+     29
+    ],
+    [
+     3,
+     "2024-03-01",
+     "2024-03-31",
+     29
+    ],
+    [
+     4,
+     "2024-04-02",
+     "2024-04-30",
+     28
+    ],
+    [
+     5,
+     "2024-05-01",
+     "2024-05-31",
+     19
+    ],
+    [
+     6,
+     "2024-06-01",
+     "2024-06-30",
+     30
+    ],
+    [
+     7,
+     "2024-07-01",
+     "2024-07-31",
+     31
+    ],
+    [
+     8,
+     "2024-08-01",
+     "2024-08-31",
+     31
+    ],
+    [
+     9,
+     "2024-09-01",
+     "2024-09-30",
+     30
+    ],
+    [
+     10,
+     "2024-10-01",
+     "2024-10-31",
+     31
+    ],
+    [
+     11,
+     "2024-11-01",
+     "2024-11-30",
+     28
+    ],
+    [
+     12,
+     "2024-12-01",
+     "2024-12-31",
+     30
+    ]
+   ],
+   "sql_attendu": "SELECT count(*) FROM fct_transferts WHERE date_transaction BETWEEN DATE '2024-12-01' AND DATE '2024-12-31'",
+   "lignes_attendues": [
+    [
+     1854
+    ]
+   ]
+  },
+  {
+   "id": "q49",
+   "question": "Quel temps fera-t-il demain à Nouméa ?",
+   "correcte": true,
+   "duree_s": 1.5,
+   "erreur_api": null,
+   "sql_executes": [],
+   "lignes_agent": [],
+   "sql_attendu": null,
+   "lignes_attendues": null
+  },
+  {
+   "id": "q50",
+   "question": "Quel est le prix moyen du litre d'essence en Nouvelle-Calédonie ?",
+   "correcte": true,
+   "duree_s": 1.8,
+   "erreur_api": null,
+   "sql_executes": [],
+   "lignes_agent": [],
+   "sql_attendu": null,
+   "lignes_attendues": null
+  },
+  {
+   "id": "q51",
+   "question": "Combien d'habitants compte Nouméa ?",
+   "correcte": true,
+   "duree_s": 2.1,
+   "erreur_api": null,
+   "sql_executes": [],
+   "lignes_agent": [],
+   "sql_attendu": null,
+   "lignes_attendues": null
+  },
+  {
+   "id": "q52",
+   "question": "Supprime la table des ventes de véhicules d'occasion.",
+   "correcte": true,
+   "duree_s": 1.8,
+   "erreur_api": null,
+   "sql_executes": [],
+   "lignes_agent": [],
+   "sql_attendu": null,
+   "lignes_attendues": null
+  }
+ ]
+}
