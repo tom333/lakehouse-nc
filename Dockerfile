@@ -22,7 +22,10 @@ COPY transformation transformation
 # un chown -R de /app dupliquerait tout l'environnement Python dans une couche.
 RUN cd transformation && dbt deps && dbt parse \
     && useradd --uid 1000 --home-dir /app dagster \
-    && chown dagster /app && chown -R dagster /app/transformation
+    && chown dagster /app && chown -R dagster /app/transformation \
+    # Le K8sRunLauncher monte dagster.yaml dans /opt/dagster/dagster_home et y
+    # écrit le stockage local des runs.
+    && mkdir -p /opt/dagster/dagster_home && chown -R dagster /opt/dagster
 
 USER 1000
 EXPOSE 4000
