@@ -79,14 +79,15 @@ spec:
                   },
               }
               nom = "{{ .Values.warehouse.name }}"
-              code, rep = appel("POST", "/warehouse", {
-                  "warehouse-name": nom, "delete-profile": {"type": "hard"}, **stockage,
-              })
-              print("création", code)
-              if code == 409:
-                  _, liste = appel("GET", "/warehouse")
-                  wid = next(w["id"] for w in liste["warehouses"] if w["name"] == nom)
+              _, liste = appel("GET", "/warehouse")
+              wid = next((w["id"] for w in liste["warehouses"] if w["name"] == nom), None)
+              if wid:
                   code, rep = appel("POST", f"/warehouse/{wid}/storage", stockage)
                   print("mise à jour du stockage", code)
+              else:
+                  code, rep = appel("POST", "/warehouse", {
+                      "warehouse-name": nom, "delete-profile": {"type": "hard"}, **stockage,
+                  })
+                  print("création", code)
               if code >= 300:
                   raise SystemExit(f"échec {code} : {rep}")
